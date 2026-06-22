@@ -1,0 +1,8 @@
+resources:
+  - ../../cert-manager
+  - ../../rhoai
+  - ../../nfd
+  - ../../nvidia
+  - ../../oauth
+  - ../../quay
+  - ../../odf
