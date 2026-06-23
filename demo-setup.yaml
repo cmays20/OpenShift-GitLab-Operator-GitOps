@@ -8,7 +8,7 @@ spec:
     server: 'https://kubernetes.default.svc'
   project: default
   source:
-    path: gitops/ArgoCD-Applications/overlay
+    path: gitops/ArgoCD-Applications/aggregate
     repoURL: 'https://github.com/cmays20/OpenShift-GitLab-Operator-GitOps.git'
     targetRevision: HEAD
   syncPolicy:
