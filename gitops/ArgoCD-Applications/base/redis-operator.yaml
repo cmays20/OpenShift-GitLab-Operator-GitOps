@@ -3,14 +3,21 @@ kind: Application
 metadata:
   name: redis-operator
   namespace: openshift-gitops
+  annotations:
+    argocd.argoproj.io/sync-wave: "5"
 spec:
   destination:
     server: 'https://kubernetes.default.svc'
+    namespace: ot-operators
+
   project: default
   source:
-    path: gitops/HelmCharts/Redis-Operator/aggregate
-    repoURL: 'GITREPO'
-    targetRevision: REVISION
+    repoURL: https://ot-container-kit.github.io/helm-charts
+    chart: redis-operator
+    targetRevision: 0.24.0
+    helm:
+      releaseName: redis-operator
+      valueFiles: redis-redis-values.yaml
   syncPolicy:
     automated:
       selfHeal: true

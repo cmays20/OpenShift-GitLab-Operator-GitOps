@@ -8,4 +8,4 @@ helmCharts:
     repo: https://ot-container-kit.github.io/helm-charts
     namespace: ot-operators
     releaseName: ot-helm/redis-operator
-    valuesFile: values.yaml
+    valuesFile: redis-values.yaml
