@@ -3,8 +3,6 @@ kind: Application
 metadata:
   name: redis-operator
   namespace: openshift-gitops
-  annotations:
-    argocd.argoproj.io/sync-wave: "5"
 spec:
   destination:
     server: 'https://kubernetes.default.svc'
