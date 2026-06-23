@@ -19,7 +19,7 @@ spec:
         - $values/redis-values.yaml
     - repoURL: https://github.com/cmays20/OpenShift-GitLab-Operator-GitOps.git
       targetRevision: HEAD
-      path: gitops/ArgoCD-Applications/helm-charts
+      path: gitops/ArgoCD-Applications/helm-charts/redis-values
       ref: values
   syncPolicy:
     automated:
