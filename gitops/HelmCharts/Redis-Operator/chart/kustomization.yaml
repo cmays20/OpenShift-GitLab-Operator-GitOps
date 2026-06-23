@@ -1,0 +1,11 @@
+namespace: ot-operators
+
+resources:
+  - namespace.yaml
+
+helmCharts:
+  - name: redis-operator
+    repo: https://ot-container-kit.github.io/helm-charts
+    namespace: ot-operators
+    releaseName: ot-helm/redis-operator
+    valuesFile: values.yaml

@@ -1,0 +1,3 @@
+redisOperator:
+  featureGates:
+    GenerateConfigInInitContainer: true
