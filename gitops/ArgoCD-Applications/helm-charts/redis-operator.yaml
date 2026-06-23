@@ -9,14 +9,18 @@ spec:
     namespace: ot-operators
 
   project: default
-  source:
-    repoURL: https://ot-container-kit.github.io/helm-charts
-    chart: redis-operator
-    targetRevision: 0.24.0
-    helm:
-      releaseName: redis-operator
-      valueFiles:
-      - redis-values.yaml
+  sources:
+    - repoURL: https://ot-container-kit.github.io/helm-charts
+      chart: redis-operator
+      targetRevision: 0.24.0
+      helm:
+        releaseName: redis-operator
+        valueFiles:
+        - $values/redis-values.yaml
+    - repoURL: https://github.com/cmays20/OpenShift-GitLab-Operator-GitOps.git
+      targetRevision: HEAD
+      path: gitops/ArgoCD-Applications/helm-charts
+      ref: values
   syncPolicy:
     automated:
       selfHeal: true
