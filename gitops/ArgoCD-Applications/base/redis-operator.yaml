@@ -17,7 +17,8 @@ spec:
     targetRevision: 0.24.0
     helm:
       releaseName: redis-operator
-      valueFiles: redis-redis-values.yaml
+      valueFiles:
+      - redis-redis-values.yaml
   syncPolicy:
     automated:
       selfHeal: true
