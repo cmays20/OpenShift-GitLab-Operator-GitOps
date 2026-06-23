@@ -16,7 +16,7 @@ spec:
       helm:
         releaseName: redis-operator
         valueFiles:
-        - $values/redis-values.yaml
+          - $values/gitops/ArgoCD-Applications/helm-charts/redis-values/redis-values.yaml
     - repoURL: https://github.com/cmays20/OpenShift-GitLab-Operator-GitOps.git
       targetRevision: HEAD
       path: gitops/ArgoCD-Applications/helm-charts/redis-values
