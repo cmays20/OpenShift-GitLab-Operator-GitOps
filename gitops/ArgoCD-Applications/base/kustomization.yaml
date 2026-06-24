@@ -2,3 +2,4 @@ resources:
   - argocd-permissions.yaml
   - cert-manager.yaml
   - odf-lite.yaml
+  - cloud-native-pg.yaml
