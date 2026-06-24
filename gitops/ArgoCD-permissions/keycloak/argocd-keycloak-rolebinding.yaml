@@ -1,0 +1,13 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: argocd-cnpg-cluster-rolebinding
+  namespace: keycloak
+subjects:
+  - kind: ServiceAccount
+    name: openshift-gitops-argocd-application-controller
+    namespace: openshift-gitops
+roleRef:
+  kind: Role
+  name: argocd-cnpg-cluster-role
+  apiGroup: rbac.authorization.k8s.io
