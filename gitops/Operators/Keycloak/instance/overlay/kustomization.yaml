@@ -19,7 +19,7 @@ patches:
         value: 'keycloak.apps.mays-demo.sandbox500.opentlc.com'
   - target:
       group: k8s.keycloak.org
-      version: v2alpha1
+      version: v2beta1
       kind: Keycloak
       name: keycloak
     patch: |-
