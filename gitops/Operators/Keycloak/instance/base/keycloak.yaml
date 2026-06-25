@@ -9,7 +9,7 @@ spec:
   instances: 1
   db:
     vendor: postgres
-    host: postgres-db.keycloak.svc
+    host: cluster-pg-keycloak-rw.keycloak.svc
     database: keycloak
     usernameSecret:
       name: cluster-pg-keycloak-app
