@@ -1,4 +1,4 @@
-apiVersion: k8s.keycloak.org/v2alpha1
+apiVersion: k8s.keycloak.org/v2beta1
 kind: Keycloak
 metadata:
   name: keycloak
@@ -10,11 +10,12 @@ spec:
   db:
     vendor: postgres
     host: postgres-db.keycloak.svc
+    database: keycloak
     usernameSecret:
-      name: keycloak-db-secret
+      name: cluster-pg-keycloak-app
       key: username
     passwordSecret:
-      name: keycloak-db-secret
+      name: cluster-pg-keycloak-app
       key: password
   http:
     tlsSecret: keycloak-certs-letsencrypt

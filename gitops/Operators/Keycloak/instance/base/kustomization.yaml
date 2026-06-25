@@ -4,7 +4,7 @@ kind: Kustomization
 namespace: keycloak
 
 resources:
-#  - keycloak.yaml
+  - keycloak.yaml
   - certificate.yaml
   - console-link.yaml
   - postgres-cluster.yaml
