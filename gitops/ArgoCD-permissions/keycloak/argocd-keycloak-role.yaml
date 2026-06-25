@@ -6,5 +6,8 @@ metadata:
 rules:
   - apiGroups: ["postgresql.cnpg.io"]
     resources: ["clusters"]
-    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+    verbs: ["*"]
+  - apiGroups: [ "k8s.keycloak.org" ]
+    resources: [ "keycloaks", "keycloakrealmimports" ]
+    verbs: [ "*" ]
 
