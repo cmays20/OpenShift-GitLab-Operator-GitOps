@@ -1,7 +1,15 @@
 global:
   openshift: true
 
+injector:
+  image:
+    repository: "docker.io/hashicorp/vault-k8s"
+    tag: "1.4.1"
+
 server:
+  image:
+    repository: "docker.io/hashicorp/vault"
+    tag: "1.17.2"
   # OpenShift-specific configurations
   route:
     enabled: true
