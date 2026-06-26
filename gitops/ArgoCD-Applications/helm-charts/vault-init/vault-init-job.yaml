@@ -195,9 +195,18 @@ data:
     join_raft_cluster vault-2
     unseal_pod vault-2
 
-    # Verify cluster status
-    echo "=== Vault Raft Cluster Peers ==="
-    oc exec vault-0 -n vault -- vault operator raft list-peers
+    # Verify cluster status (requires authentication, so make it optional)
+    echo "=== Verifying Vault Raft Cluster ==="
+
+    # Get root token from secret for verification
+    ROOT_TOKEN=$(oc get secret vault-unseal-keys -n vault -o jsonpath='{.data.root-token}' | base64 -d)
+
+    if [ -n "$ROOT_TOKEN" ]; then
+      echo "Listing Raft cluster peers..."
+      oc exec vault-0 -n vault -- sh -c "VAULT_TOKEN=$ROOT_TOKEN vault operator raft list-peers" || echo "Note: Could not list peers (non-fatal)"
+    else
+      echo "Note: Root token not available, skipping peer verification"
+    fi
 
     echo "=== Vault initialization and unsealing completed successfully ==="
 ---
