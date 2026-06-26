@@ -1,0 +1,29 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: vault
+  namespace: openshift-gitops
+spec:
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: vault
+
+  project: default
+  sources:
+    - repoURL: https://helm.releases.hashicorp.com
+      chart: vault
+      targetRevision: 0.28.1
+      helm:
+        releaseName: vault
+        valueFiles:
+          - $values/gitops/ArgoCD-Applications/helm-charts/vault-values/vault-values.yaml
+    - repoURL: https://github.com/cmays20/OpenShift-GitLab-Operator-GitOps.git
+      targetRevision: HEAD
+      path: gitops/ArgoCD-Applications/helm-charts/vault-values
+      ref: values
+  syncPolicy:
+    automated:
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true

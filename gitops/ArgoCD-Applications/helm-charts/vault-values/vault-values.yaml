@@ -1,0 +1,42 @@
+global:
+  openshift: true
+
+server:
+  # OpenShift-specific configurations
+  route:
+    enabled: true
+    host: ""
+    tls:
+      termination: edge
+
+  # Data storage
+  dataStorage:
+    enabled: true
+    size: 10Gi
+    storageClass: null
+
+  # Audit storage
+  auditStorage:
+    enabled: true
+    size: 10Gi
+    storageClass: null
+
+  # High Availability mode
+  ha:
+    enabled: true
+    replicas: 3
+    raft:
+      enabled: true
+      setNodeId: true
+
+  # Service configuration
+  service:
+    enabled: true
+
+  # Standalone mode disabled when HA is enabled
+  standalone:
+    enabled: false
+
+ui:
+  enabled: true
+  serviceType: ClusterIP
