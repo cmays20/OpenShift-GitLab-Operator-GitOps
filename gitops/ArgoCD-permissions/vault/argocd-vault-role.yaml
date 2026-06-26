@@ -5,10 +5,16 @@ metadata:
   namespace: vault
 rules:
   - apiGroups: [""]
-    resources: ["services"]
+    resources: ["services", "serviceaccounts", "configmaps"]
     verbs: ["create", "update", "patch", "delete"]
   - apiGroups: ["apps"]
     resources: ["statefulsets", "deployments"]
+    verbs: ["create", "update", "patch", "delete"]
+  - apiGroups: ["batch"]
+    resources: ["jobs"]
+    verbs: ["create", "update", "patch", "delete"]
+  - apiGroups: ["rbac.authorization.k8s.io"]
+    resources: ["roles", "rolebindings"]
     verbs: ["create", "update", "patch", "delete"]
   - apiGroups: ["route.openshift.io"]
     resources: ["routes"]

@@ -1,0 +1,209 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: vault-init
+  namespace: vault
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: vault-init
+  namespace: vault
+rules:
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["get", "create", "update", "patch"]
+  - apiGroups: [""]
+    resources: ["pods", "pods/exec"]
+    verbs: ["get", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: vault-init
+  namespace: vault
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: vault-init
+subjects:
+  - kind: ServiceAccount
+    name: vault-init
+    namespace: vault
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vault-init-script
+  namespace: vault
+data:
+  init.sh: |
+    #!/bin/sh
+    set -e
+
+    echo "=== Vault Initialization and Unsealing Script ==="
+
+    # Wait for vault-0 pod to exist and be running (not necessarily ready)
+    echo "Waiting for vault-0 pod to be running..."
+    while [ "$(oc get pod vault-0 -n vault -o jsonpath='{.status.phase}' 2>/dev/null)" != "Running" ]; do
+      echo "vault-0 pod not running yet, waiting..."
+      sleep 5
+    done
+
+    # Wait for Vault process to be responsive (even if sealed/uninitialized)
+    echo "Waiting for Vault process to be responsive..."
+    while ! oc exec vault-0 -n vault -- vault status 2>/dev/null; do
+      echo "Vault process not responsive yet, waiting..."
+      sleep 5
+    done
+
+    # Check if Vault is already initialized
+    if oc exec vault-0 -n vault -- vault status 2>&1 | grep -q "Initialized.*true"; then
+      echo "Vault is already initialized"
+      ALREADY_INITIALIZED=true
+    else
+      echo "Vault is not initialized, proceeding with initialization"
+      ALREADY_INITIALIZED=false
+    fi
+
+    # Initialize Vault if not already initialized
+    if [ "$ALREADY_INITIALIZED" = "false" ]; then
+      echo "Initializing Vault..."
+      INIT_OUTPUT=$(oc exec vault-0 -n vault -- vault operator init -key-shares=5 -key-threshold=3 -format=json)
+
+      # Extract unseal keys and root token
+      UNSEAL_KEY_1=$(echo $INIT_OUTPUT | jq -r '.unseal_keys_b64[0]')
+      UNSEAL_KEY_2=$(echo $INIT_OUTPUT | jq -r '.unseal_keys_b64[1]')
+      UNSEAL_KEY_3=$(echo $INIT_OUTPUT | jq -r '.unseal_keys_b64[2]')
+      UNSEAL_KEY_4=$(echo $INIT_OUTPUT | jq -r '.unseal_keys_b64[3]')
+      UNSEAL_KEY_5=$(echo $INIT_OUTPUT | jq -r '.unseal_keys_b64[4]')
+      ROOT_TOKEN=$(echo $INIT_OUTPUT | jq -r '.root_token')
+
+      echo "Storing unseal keys and root token in Kubernetes secret..."
+      oc create secret generic vault-unseal-keys -n vault \
+        --from-literal=unseal-key-1="$UNSEAL_KEY_1" \
+        --from-literal=unseal-key-2="$UNSEAL_KEY_2" \
+        --from-literal=unseal-key-3="$UNSEAL_KEY_3" \
+        --from-literal=unseal-key-4="$UNSEAL_KEY_4" \
+        --from-literal=unseal-key-5="$UNSEAL_KEY_5" \
+        --from-literal=root-token="$ROOT_TOKEN" \
+        --dry-run=client -o yaml | oc apply -f -
+
+      echo "Vault initialized successfully!"
+    fi
+
+    # Retrieve unseal keys from secret
+    echo "Retrieving unseal keys from secret..."
+    UNSEAL_KEY_1=$(oc get secret vault-unseal-keys -n vault -o jsonpath='{.data.unseal-key-1}' | base64 -d)
+    UNSEAL_KEY_2=$(oc get secret vault-unseal-keys -n vault -o jsonpath='{.data.unseal-key-2}' | base64 -d)
+    UNSEAL_KEY_3=$(oc get secret vault-unseal-keys -n vault -o jsonpath='{.data.unseal-key-3}' | base64 -d)
+
+    # Function to unseal a pod
+    unseal_pod() {
+      POD=$1
+      echo "Unsealing $POD..."
+
+      # Check if pod is already unsealed
+      if oc exec $POD -n vault -- vault status 2>&1 | grep -q "Sealed.*false"; then
+        echo "$POD is already unsealed"
+        return 0
+      fi
+
+      # Unseal with 3 keys
+      oc exec $POD -n vault -- vault operator unseal "$UNSEAL_KEY_1" > /dev/null
+      oc exec $POD -n vault -- vault operator unseal "$UNSEAL_KEY_2" > /dev/null
+      oc exec $POD -n vault -- vault operator unseal "$UNSEAL_KEY_3" > /dev/null
+
+      echo "$POD unsealed successfully"
+    }
+
+    # Function to join pod to Raft cluster
+    join_raft_cluster() {
+      POD=$1
+      echo "Joining $POD to Raft cluster..."
+
+      # Check if pod is part of the cluster already
+      if oc exec vault-0 -n vault -- vault operator raft list-peers 2>&1 | grep -q "$POD"; then
+        echo "$POD is already part of the Raft cluster"
+        return 0
+      fi
+
+      # Join the cluster
+      oc exec $POD -n vault -- vault operator raft join http://vault-0.vault-internal:8200 || echo "$POD join attempted"
+
+      echo "$POD joined to Raft cluster"
+    }
+
+    # Unseal vault-0
+    unseal_pod vault-0
+
+    # Wait for other pods to be running
+    echo "Waiting for vault-1 pod to be running..."
+    while [ "$(oc get pod vault-1 -n vault -o jsonpath='{.status.phase}' 2>/dev/null)" != "Running" ]; do
+      echo "vault-1 pod not running yet, waiting..."
+      sleep 5
+    done
+
+    echo "Waiting for vault-1 Vault process to be responsive..."
+    while ! oc exec vault-1 -n vault -- vault status 2>/dev/null; do
+      echo "vault-1 Vault process not responsive yet, waiting..."
+      sleep 5
+    done
+
+    echo "Waiting for vault-2 pod to be running..."
+    while [ "$(oc get pod vault-2 -n vault -o jsonpath='{.status.phase}' 2>/dev/null)" != "Running" ]; do
+      echo "vault-2 pod not running yet, waiting..."
+      sleep 5
+    done
+
+    echo "Waiting for vault-2 Vault process to be responsive..."
+    while ! oc exec vault-2 -n vault -- vault status 2>/dev/null; do
+      echo "vault-2 Vault process not responsive yet, waiting..."
+      sleep 5
+    done
+
+    # Join and unseal vault-1
+    join_raft_cluster vault-1
+    unseal_pod vault-1
+
+    # Join and unseal vault-2
+    join_raft_cluster vault-2
+    unseal_pod vault-2
+
+    # Verify cluster status
+    echo "=== Vault Raft Cluster Peers ==="
+    oc exec vault-0 -n vault -- vault operator raft list-peers
+
+    echo "=== Vault initialization and unsealing completed successfully ==="
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: vault-init
+  namespace: vault
+spec:
+  ttlSecondsAfterFinished: 300
+  backoffLimit: 3
+  template:
+    metadata:
+      labels:
+        app: vault-init
+    spec:
+      serviceAccountName: vault-init
+      restartPolicy: OnFailure
+      containers:
+        - name: vault-init
+          image: registry.redhat.io/openshift4/ose-cli:latest
+          command: ["/bin/sh", "/scripts/init.sh"]
+          volumeMounts:
+            - name: init-script
+              mountPath: /scripts
+          env:
+            - name: HOME
+              value: /tmp
+      volumes:
+        - name: init-script
+          configMap:
+            name: vault-init-script
+            defaultMode: 0755
