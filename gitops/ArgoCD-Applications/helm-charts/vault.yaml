@@ -21,6 +21,14 @@ spec:
       targetRevision: HEAD
       path: gitops/ArgoCD-Applications/helm-charts/vault-values
       ref: values
+  ignoreDifferences:
+    - group: apps
+      kind: StatefulSet
+      jsonPointers:
+        - /spec/volumeClaimTemplates/0/apiVersion
+        - /spec/volumeClaimTemplates/0/kind
+        - /spec/volumeClaimTemplates/1/apiVersion
+        - /spec/volumeClaimTemplates/1/kind
   syncPolicy:
     automated:
       selfHeal: true
