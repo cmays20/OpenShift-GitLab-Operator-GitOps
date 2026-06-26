@@ -13,7 +13,6 @@ server:
   # OpenShift-specific configurations
   route:
     enabled: true
-    host: ""
     tls:
       termination: edge
 
