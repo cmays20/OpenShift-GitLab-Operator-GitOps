@@ -1,0 +1,5 @@
+resources:
+  - argocd-vault-role.yaml
+  - argocd-vault-rolebinding.yaml
+  - argocd-vault-clusterrole.yaml
+  - argocd-vault-clusterrolebinding.yaml

@@ -3,3 +3,4 @@ resources:
   - ../../odf
   - ../../redis-operator
   - ../../keycloak
+  - ../../vault
