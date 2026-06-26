@@ -102,6 +102,15 @@ data:
 
     # Retrieve unseal keys from secret
     echo "Retrieving unseal keys from secret..."
+    if ! oc get secret vault-unseal-keys -n vault >/dev/null 2>&1; then
+      echo "ERROR: Vault is already initialized, but vault-unseal-keys secret does not exist!"
+      echo "This means Vault was initialized outside of this job."
+      echo "Please either:"
+      echo "  1. Manually unseal Vault using the original unseal keys"
+      echo "  2. Delete and recreate the Vault installation to re-initialize"
+      exit 1
+    fi
+
     UNSEAL_KEY_1=$(oc get secret vault-unseal-keys -n vault -o jsonpath='{.data.unseal-key-1}' | base64 -d)
     UNSEAL_KEY_2=$(oc get secret vault-unseal-keys -n vault -o jsonpath='{.data.unseal-key-2}' | base64 -d)
     UNSEAL_KEY_3=$(oc get secret vault-unseal-keys -n vault -o jsonpath='{.data.unseal-key-3}' | base64 -d)
@@ -117,10 +126,10 @@ data:
         return 0
       fi
 
-      # Unseal with 3 keys
-      oc exec $POD -n vault -- vault operator unseal "$UNSEAL_KEY_1" > /dev/null
-      oc exec $POD -n vault -- vault operator unseal "$UNSEAL_KEY_2" > /dev/null
-      oc exec $POD -n vault -- vault operator unseal "$UNSEAL_KEY_3" > /dev/null
+      # Unseal with 3 keys (pass key as argument, not stdin)
+      oc exec $POD -n vault -- sh -c "vault operator unseal $UNSEAL_KEY_1" > /dev/null
+      oc exec $POD -n vault -- sh -c "vault operator unseal $UNSEAL_KEY_2" > /dev/null
+      oc exec $POD -n vault -- sh -c "vault operator unseal $UNSEAL_KEY_3" > /dev/null
 
       echo "$POD unsealed successfully"
     }
