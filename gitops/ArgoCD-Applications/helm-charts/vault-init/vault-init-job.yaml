@@ -77,15 +77,15 @@ data:
     # Initialize Vault if not already initialized
     if [ "$ALREADY_INITIALIZED" = "false" ]; then
       echo "Initializing Vault..."
-      INIT_OUTPUT=$(oc exec vault-0 -n vault -- vault operator init -key-shares=5 -key-threshold=3 -format=json)
+      INIT_OUTPUT=$(oc exec vault-0 -n vault -- vault operator init -key-shares=5 -key-threshold=3)
 
-      # Extract unseal keys and root token
-      UNSEAL_KEY_1=$(echo $INIT_OUTPUT | jq -r '.unseal_keys_b64[0]')
-      UNSEAL_KEY_2=$(echo $INIT_OUTPUT | jq -r '.unseal_keys_b64[1]')
-      UNSEAL_KEY_3=$(echo $INIT_OUTPUT | jq -r '.unseal_keys_b64[2]')
-      UNSEAL_KEY_4=$(echo $INIT_OUTPUT | jq -r '.unseal_keys_b64[3]')
-      UNSEAL_KEY_5=$(echo $INIT_OUTPUT | jq -r '.unseal_keys_b64[4]')
-      ROOT_TOKEN=$(echo $INIT_OUTPUT | jq -r '.root_token')
+      # Extract unseal keys and root token from text output
+      UNSEAL_KEY_1=$(echo "$INIT_OUTPUT" | grep "Unseal Key 1:" | awk '{print $NF}')
+      UNSEAL_KEY_2=$(echo "$INIT_OUTPUT" | grep "Unseal Key 2:" | awk '{print $NF}')
+      UNSEAL_KEY_3=$(echo "$INIT_OUTPUT" | grep "Unseal Key 3:" | awk '{print $NF}')
+      UNSEAL_KEY_4=$(echo "$INIT_OUTPUT" | grep "Unseal Key 4:" | awk '{print $NF}')
+      UNSEAL_KEY_5=$(echo "$INIT_OUTPUT" | grep "Unseal Key 5:" | awk '{print $NF}')
+      ROOT_TOKEN=$(echo "$INIT_OUTPUT" | grep "Initial Root Token:" | awk '{print $NF}')
 
       echo "Storing unseal keys and root token in Kubernetes secret..."
       oc create secret generic vault-unseal-keys -n vault \
