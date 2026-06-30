@@ -208,6 +208,71 @@ data:
       echo "Note: Root token not available, skipping peer verification"
     fi
 
+    echo "=== Configuring Kubernetes Authentication ==="
+
+    if [ -z "$ROOT_TOKEN" ]; then
+      echo "ERROR: Root token not available, cannot configure Kubernetes auth"
+      exit 1
+    fi
+
+    # Check if Kubernetes auth is already enabled
+    if oc exec vault-0 -n vault -- sh -c "VAULT_TOKEN=$ROOT_TOKEN vault auth list" 2>&1 | grep -q "kubernetes/"; then
+      echo "Kubernetes auth method is already enabled"
+    else
+      echo "Enabling Kubernetes auth method..."
+      oc exec vault-0 -n vault -- sh -c "VAULT_TOKEN=$ROOT_TOKEN vault auth enable kubernetes"
+    fi
+
+    # Configure Kubernetes auth method
+    echo "Configuring Kubernetes auth method..."
+
+    # Get the Kubernetes CA cert and service account token from vault-0 pod
+    K8S_CA_CERT=$(oc exec vault-0 -n vault -- cat /var/run/secrets/kubernetes.io/serviceaccount/ca.crt)
+    K8S_HOST="https://kubernetes.default.svc"
+
+    # Configure the Kubernetes auth method
+    oc exec vault-0 -n vault -- sh -c "VAULT_TOKEN=$ROOT_TOKEN vault write auth/kubernetes/config \
+      kubernetes_host=\"$K8S_HOST\" \
+      kubernetes_ca_cert=\"$K8S_CA_CERT\" \
+      disable_local_ca_jwt=false"
+
+    echo "Kubernetes auth method configured successfully"
+
+    # Create policy for Vault Secrets Operator
+    echo "Creating policy for Vault Secrets Operator..."
+
+    POLICY_NAME="vault-secrets-operator"
+    POLICY_CONTENT='path "secret/*" {
+      capabilities = ["read", "list"]
+    }
+    path "secret/data/*" {
+      capabilities = ["read", "list"]
+    }
+    path "secret/metadata/*" {
+      capabilities = ["read", "list"]
+    }'
+
+    oc exec vault-0 -n vault -- sh -c "VAULT_TOKEN=$ROOT_TOKEN vault policy write $POLICY_NAME -" <<EOF
+$POLICY_CONTENT
+EOF
+
+    echo "Policy '$POLICY_NAME' created successfully"
+
+    # Create role for Vault Secrets Operator
+    echo "Creating Kubernetes auth role for Vault Secrets Operator..."
+
+    VSO_ROLE="vault-secrets-operator"
+    VSO_NAMESPACE="vault-secrets-operator-system"
+    VSO_SA="vault-secrets-operator-controller-manager"
+
+    oc exec vault-0 -n vault -- sh -c "VAULT_TOKEN=$ROOT_TOKEN vault write auth/kubernetes/role/$VSO_ROLE \
+      bound_service_account_names=$VSO_SA \
+      bound_service_account_namespaces=$VSO_NAMESPACE \
+      policies=$POLICY_NAME \
+      ttl=24h"
+
+    echo "Kubernetes auth role '$VSO_ROLE' created successfully"
+
     echo "=== Vault initialization and unsealing completed successfully ==="
 ---
 apiVersion: batch/v1
