@@ -1,3 +1,4 @@
 resources:
   - argocd-redis-operator-role.yaml
   - argocd-redis-operator-rolebinding.yaml
+  - namespace.yaml
