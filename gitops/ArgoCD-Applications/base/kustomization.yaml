@@ -4,3 +4,4 @@ resources:
   - odf-lite.yaml
   - cloud-native-pg.yaml
   - keycloak.yaml
+  - vault-secrets-operator.yaml
