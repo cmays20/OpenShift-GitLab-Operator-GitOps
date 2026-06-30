@@ -3,3 +3,15 @@ kind: Kustomization
 
 resources:
   - vault-init-job.yaml
+  - vault-console-link.yaml
+
+patches:
+  - target:
+      group: console.openshift.io
+      version: v1
+      kind: ConsoleLink
+      name: vault
+    patch: |-
+      - op: replace
+        path: /spec/href
+        value: 'https://vault-vault.apps.mays-demo.sandbox4175.opentlc.com'
