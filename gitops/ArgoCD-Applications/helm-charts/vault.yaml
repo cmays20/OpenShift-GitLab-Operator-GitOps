@@ -29,6 +29,10 @@ spec:
         - /spec/volumeClaimTemplates/0/kind
         - /spec/volumeClaimTemplates/1/apiVersion
         - /spec/volumeClaimTemplates/1/kind
+    - group: route.openshift.io
+      kind: Route
+      jsonPointers:
+        - /spec/host
   syncPolicy:
     automated:
       selfHeal: true
