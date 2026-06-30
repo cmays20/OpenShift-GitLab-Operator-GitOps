@@ -4,3 +4,4 @@ resources:
   - ../../redis-operator
   - ../../keycloak
   - ../../vault
+  - ../../vault-secrets-operator

@@ -1,0 +1,3 @@
+resources:
+  - argocd-vault-role.yaml
+  - argocd-vault-rolebinding.yaml
