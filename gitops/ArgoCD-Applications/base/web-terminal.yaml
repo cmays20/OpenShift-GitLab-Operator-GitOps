@@ -10,7 +10,7 @@ spec:
     server: 'https://kubernetes.default.svc'
   project: default
   source:
-    path: Operators/WebTerminal/operator
+    path: gitops/Operators/WebTerminal/operator
     repoURL: 'GITREPO'
     targetRevision: REVISION
   syncPolicy:
