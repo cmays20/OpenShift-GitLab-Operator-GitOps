@@ -13,7 +13,7 @@ server:
   # OpenShift-specific configurations
   route:
     enabled: true
-    host: "vault-vault.apps.mays-demo.sandbox500.opentlc.com"
+    host: "vault-vault.apps.mays-demo.sandbox4175.opentlc.com"
     tls:
       termination: edge
 

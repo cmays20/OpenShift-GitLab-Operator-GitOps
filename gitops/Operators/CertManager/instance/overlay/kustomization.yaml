@@ -25,7 +25,7 @@ patches:
     patch: |-
       - op: replace
         path: /spec/commonName
-        value: '*.apps.mays-demo.sandbox500.opentlc.com'
+        value: '*.apps.mays-demo.sandbox4175.opentlc.com'
       - op: replace
         path: /spec/dnsNames/0
-        value: '*.apps.mays-demo.sandbox500.opentlc.com'
+        value: '*.apps.mays-demo.sandbox4175.opentlc.com'
