@@ -16,7 +16,7 @@ patches:
         value: 'cmays@outlook.com'
       - op: replace
         path: /spec/acme/solvers/0/dns01/route53/hostedZoneID
-        value: Z350MKDUNDPNHJ
+        value: Z01961953G48B4XF98MCT
   - target:
       group: cert-manager.io
       version: v1
