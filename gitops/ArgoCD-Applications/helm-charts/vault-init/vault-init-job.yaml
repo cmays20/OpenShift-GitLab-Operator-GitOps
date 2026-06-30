@@ -242,7 +242,8 @@ data:
     echo "Creating policy for Vault Secrets Operator..."
 
     POLICY_NAME="vault-secrets-operator"
-    POLICY_CONTENT='path "secret/*" {
+
+    echo 'path "secret/*" {
       capabilities = ["read", "list"]
     }
     path "secret/data/*" {
@@ -250,11 +251,7 @@ data:
     }
     path "secret/metadata/*" {
       capabilities = ["read", "list"]
-    }'
-
-    oc exec vault-0 -n vault -- sh -c "VAULT_TOKEN=$ROOT_TOKEN vault policy write $POLICY_NAME -" <<EOF
-$POLICY_CONTENT
-EOF
+    }' | oc exec -i vault-0 -n vault -- sh -c "VAULT_TOKEN=$ROOT_TOKEN vault policy write $POLICY_NAME -"
 
     echo "Policy '$POLICY_NAME' created successfully"
 
