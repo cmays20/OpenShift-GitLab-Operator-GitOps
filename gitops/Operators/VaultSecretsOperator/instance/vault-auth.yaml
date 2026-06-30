@@ -1,0 +1,23 @@
+apiVersion: secrets.hashicorp.com/v1beta1
+kind: VaultAuth
+metadata:
+  name: vault-auth
+  namespace: vault
+spec:
+  # Reference to VaultConnection
+  vaultConnectionRef: vault-connection
+
+  # Kubernetes authentication method
+  method: kubernetes
+  mount: kubernetes
+
+  kubernetes:
+    # Role created in vault-init job
+    role: vault-secrets-operator
+
+    # Service account in the vault namespace
+    serviceAccount: vault-auth
+
+    # Token audience (optional, but recommended for security)
+    audiences:
+      - vault
