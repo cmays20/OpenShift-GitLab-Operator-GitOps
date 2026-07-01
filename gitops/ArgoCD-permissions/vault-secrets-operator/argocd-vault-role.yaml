@@ -4,5 +4,5 @@ metadata:
   name: argocd-vault-role
 rules:
   - apiGroups: ["secrets.hashicorp.com"]
-    resources: ["vaultauths", "vaultconnections"]
+    resources: ["vaultauths", "vaultconnections", "vaultstaticsecrets"]
     verbs: ["*"]
