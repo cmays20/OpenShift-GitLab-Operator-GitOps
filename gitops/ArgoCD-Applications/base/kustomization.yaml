@@ -6,3 +6,4 @@ resources:
   - keycloak.yaml
   - vault-secrets-operator.yaml
   - web-terminal.yaml
+  - oauth.yaml
