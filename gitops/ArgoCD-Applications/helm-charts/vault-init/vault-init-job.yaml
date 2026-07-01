@@ -243,13 +243,16 @@ data:
 
     POLICY_NAME="vault-secrets-operator"
 
-    echo 'path "secret/*" {
+    echo 'path "secret/data/keycloak/*" {
       capabilities = ["read", "list"]
     }
-    path "secret/data/*" {
+    path "secret/data/openshift-config/*" {
       capabilities = ["read", "list"]
     }
-    path "secret/metadata/*" {
+    path "secret/metadata/keycloak/*" {
+      capabilities = ["read", "list"]
+    }
+    path "secret/metadata/openshift-config/*" {
       capabilities = ["read", "list"]
     }' | oc exec -i vault-0 -n vault -- sh -c "VAULT_TOKEN=$ROOT_TOKEN vault policy write $POLICY_NAME -"
 
@@ -277,6 +280,8 @@ kind: Job
 metadata:
   name: vault-init
   namespace: vault
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
 spec:
   ttlSecondsAfterFinished: 300
   backoffLimit: 3

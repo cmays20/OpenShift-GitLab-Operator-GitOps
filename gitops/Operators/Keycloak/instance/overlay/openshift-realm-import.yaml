@@ -1,0 +1,339 @@
+apiVersion: k8s.keycloak.org/v2beta1
+kind: KeycloakRealmImport
+metadata:
+  name: openshift-realm
+  namespace: keycloak
+  annotations:
+    argocd.argoproj.io/sync-wave: "10"
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  keycloakCRName: keycloak
+  placeholders:
+    CMAYS_INITIAL_PASSWORD:
+      secret:
+        key: password
+        name: cmays-initial-password
+    OPENSHIFT_OAUTH_CLIENT_SECRET:
+      secret:
+        key: client-secret
+        name: openshift-oauth-client-secret
+  realm:
+    clientScopes:
+      - name: roles
+        protocol: openid-connect
+        protocolMappers:
+          - config:
+              access.token.claim: 'true'
+              claim.name: groups
+              full.path: 'false'
+              id.token.claim: 'true'
+            consentRequired: false
+            name: groups
+            protocol: openid-connect
+            protocolMapper: oidc-group-membership-mapper
+      - attributes:
+          display.on.consent.screen: 'false'
+          include.in.token.scope: 'false'
+        name: web-origins
+        protocol: openid-connect
+        protocolMappers:
+          - config:
+              access.token.claim: 'true'
+              introspection.token.claim: 'true'
+            name: allowed web origins
+            protocol: openid-connect
+            protocolMapper: oidc-allowed-origins-mapper
+      - attributes:
+          display.on.consent.screen: 'false'
+          include.in.token.scope: 'false'
+        name: acr
+        protocol: openid-connect
+        protocolMappers:
+          - config:
+              access.token.claim: 'true'
+              claim.name: acr
+              id.token.claim: 'true'
+              jsonType.label: String
+            name: acr
+            protocol: openid-connect
+            protocolMapper: oidc-acr-mapper
+      - name: profile
+        description: "OpenID Connect built-in scope: profile"
+        protocol: openid-connect
+        attributes:
+          include.in.token.scope: "true"
+          consent.screen.text: "${profileScopeConsentText}"
+          display.on.consent.screen: "true"
+        protocolMappers:
+          - name: family name
+            protocol: openid-connect
+            protocolMapper: oidc-usermodel-attribute-mapper
+            consentRequired: false
+            config:
+              introspection.token.claim: "true"
+              userinfo.token.claim: "true"
+              user.attribute: lastName
+              id.token.claim: "true"
+              access.token.claim: "true"
+              claim.name: family_name
+              jsonType.label: String
+
+          - name: full name
+            protocol: openid-connect
+            protocolMapper: oidc-full-name-mapper
+            consentRequired: false
+            config:
+              id.token.claim: "true"
+              introspection.token.claim: "true"
+              access.token.claim: "true"
+              userinfo.token.claim: "true"
+
+          - name: username
+            protocol: openid-connect
+            protocolMapper: oidc-usermodel-attribute-mapper
+            consentRequired: false
+            config:
+              introspection.token.claim: "true"
+              userinfo.token.claim: "true"
+              user.attribute: username
+              id.token.claim: "true"
+              access.token.claim: "true"
+              claim.name: preferred_username
+              jsonType.label: String
+
+          - name: profile
+            protocol: openid-connect
+            protocolMapper: oidc-usermodel-attribute-mapper
+            consentRequired: false
+            config:
+              introspection.token.claim: "true"
+              userinfo.token.claim: "true"
+              user.attribute: profile
+              id.token.claim: "true"
+              access.token.claim: "true"
+              claim.name: profile
+              jsonType.label: String
+
+          - name: given name
+            protocol: openid-connect
+            protocolMapper: oidc-usermodel-attribute-mapper
+            consentRequired: false
+            config:
+              introspection.token.claim: "true"
+              userinfo.token.claim: "true"
+              user.attribute: firstName
+              id.token.claim: "true"
+              access.token.claim: "true"
+              claim.name: given_name
+              jsonType.label: String
+
+          - name: website
+            protocol: openid-connect
+            protocolMapper: oidc-usermodel-attribute-mapper
+            consentRequired: false
+            config:
+              introspection.token.claim: "true"
+              userinfo.token.claim: "true"
+              user.attribute: website
+              id.token.claim: "true"
+              access.token.claim: "true"
+              claim.name: website
+              jsonType.label: String
+
+          - name: zoneinfo
+            protocol: openid-connect
+            protocolMapper: oidc-usermodel-attribute-mapper
+            consentRequired: false
+            config:
+              introspection.token.claim: "true"
+              userinfo.token.claim: "true"
+              user.attribute: zoneinfo
+              id.token.claim: "true"
+              access.token.claim: "true"
+              claim.name: zoneinfo
+              jsonType.label: String
+
+          - name: middle name
+            protocol: openid-connect
+            protocolMapper: oidc-usermodel-attribute-mapper
+            consentRequired: false
+            config:
+              introspection.token.claim: "true"
+              userinfo.token.claim: "true"
+              user.attribute: middleName
+              id.token.claim: "true"
+              access.token.claim: "true"
+              claim.name: middle_name
+              jsonType.label: String
+
+          - name: gender
+            protocol: openid-connect
+            protocolMapper: oidc-usermodel-attribute-mapper
+            consentRequired: false
+            config:
+              introspection.token.claim: "true"
+              userinfo.token.claim: "true"
+              user.attribute: gender
+              id.token.claim: "true"
+              access.token.claim: "true"
+              claim.name: gender
+              jsonType.label: String
+
+          - name: locale
+            protocol: openid-connect
+            protocolMapper: oidc-usermodel-attribute-mapper
+            consentRequired: false
+            config:
+              introspection.token.claim: "true"
+              userinfo.token.claim: "true"
+              user.attribute: locale
+              id.token.claim: "true"
+              access.token.claim: "true"
+              claim.name: locale
+              jsonType.label: String
+
+          - name: openshift-groups
+            protocol: openid-connect
+            protocolMapper: oidc-group-membership-mapper
+            consentRequired: false
+            config:
+              full.path: "false"
+              introspection.token.claim: "true"
+              userinfo.token.claim: "true"
+              id.token.claim: "true"
+              lightweight.claim: "false"
+              access.token.claim: "true"
+              claim.name: groups
+
+          - name: picture
+            protocol: openid-connect
+            protocolMapper: oidc-usermodel-attribute-mapper
+            consentRequired: false
+            config:
+              introspection.token.claim: "true"
+              userinfo.token.claim: "true"
+              user.attribute: picture
+              id.token.claim: "true"
+              access.token.claim: "true"
+              claim.name: picture
+              jsonType.label: String
+
+          - name: birthdate
+            protocol: openid-connect
+            protocolMapper: oidc-usermodel-attribute-mapper
+            consentRequired: false
+            config:
+              introspection.token.claim: "true"
+              userinfo.token.claim: "true"
+              user.attribute: birthdate
+              id.token.claim: "true"
+              access.token.claim: "true"
+              claim.name: birthdate
+              jsonType.label: String
+
+          - name: nickname
+            protocol: openid-connect
+            protocolMapper: oidc-usermodel-attribute-mapper
+            consentRequired: false
+            config:
+              introspection.token.claim: "true"
+              userinfo.token.claim: "true"
+              user.attribute: nickname
+              id.token.claim: "true"
+              access.token.claim: "true"
+              claim.name: nickname
+              jsonType.label: String
+
+          - name: updated at
+            protocol: openid-connect
+            protocolMapper: oidc-usermodel-attribute-mapper
+            consentRequired: false
+            config:
+              introspection.token.claim: "true"
+              userinfo.token.claim: "true"
+              user.attribute: updatedAt
+              id.token.claim: "true"
+              access.token.claim: "true"
+              claim.name: updated_at
+              jsonType.label: long
+      - attributes:
+          display.on.consent.screen: 'false'
+          include.in.token.scope: 'false'
+        name: basic
+        protocol: openid-connect
+        protocolMappers: []
+      - attributes:
+          display.on.consent.screen: 'true'
+          include.in.token.scope: 'true'
+        name: email
+        protocol: openid-connect
+        protocolMappers: []
+      - attributes:
+          display.on.consent.screen: 'true'
+          include.in.token.scope: 'true'
+        name: address
+        protocol: openid-connect
+        protocolMappers: []
+      - attributes:
+          display.on.consent.screen: 'true'
+          include.in.token.scope: 'true'
+        name: phone
+        protocol: openid-connect
+        protocolMappers: []
+      - attributes:
+          display.on.consent.screen: 'true'
+          include.in.token.scope: 'true'
+        name: organization
+        protocol: openid-connect
+        protocolMappers: []
+      - attributes:
+          display.on.consent.screen: 'false'
+          include.in.token.scope: 'true'
+        name: microprofile-jwt
+        protocol: openid-connect
+        protocolMappers: []
+    clients:
+      - enabled: true
+        clientAuthenticatorType: client-secret
+        fullScopeAllowed: true
+        redirectUris:
+          - 'https://oauth-openshift.apps.mays-demo.sandbox1116.opentlc.com/oauth2callback/*'
+        clientId: openshift
+        optionalClientScopes:
+          - address
+          - phone
+          - offline_access
+          - organization
+          - microprofile-jwt
+        defaultClientScopes:
+          - web-origins
+          - acr
+          - roles
+          - profile
+          - basic
+          - email
+        secret: '${OPENSHIFT_OAUTH_CLIENT_SECRET}'
+        publicClient: false
+        standardFlowEnabled: true
+        protocol: openid-connect
+        webOrigins:
+          - 'https://oauth-openshift.apps.mays-demo.sandbox1116.opentlc.com'
+        directAccessGrantsEnabled: true
+    enabled: true
+    groups:
+      - name: cluster-admins
+    realm: openshift
+    sslRequired: external
+    users:
+      - credentials:
+          - temporary: true
+            type: password
+            value: '${CMAYS_INITIAL_PASSWORD}'
+        email: cmays@outlook.com
+        emailVerified: true
+        enabled: true
+        firstName: Christopher
+        groups:
+          - /cluster-admins
+        lastName: Mays
+        username: cmays
