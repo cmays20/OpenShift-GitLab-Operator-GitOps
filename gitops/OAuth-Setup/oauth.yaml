@@ -15,7 +15,6 @@ spec:
         clientID: openshift
         clientSecret:
           name: openshift-oauth-client-secret
-          key: clientSecret
         issuer: https://keycloak.apps.mays-demo.sandbox4175.opentlc.com/realms/openshift
         claims:
           preferredUsername:
