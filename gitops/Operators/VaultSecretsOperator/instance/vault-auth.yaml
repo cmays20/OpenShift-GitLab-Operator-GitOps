@@ -7,6 +7,10 @@ spec:
   # Reference to VaultConnection
   vaultConnectionRef: vault-connection
 
+  # Allow all namespaces to use this VaultAuth
+  allowedNamespaces:
+    - "*"
+
   # Kubernetes authentication method
   method: kubernetes
   mount: kubernetes
