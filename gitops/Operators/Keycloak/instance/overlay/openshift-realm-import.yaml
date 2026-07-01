@@ -298,6 +298,7 @@ spec:
         fullScopeAllowed: true
         redirectUris:
           - 'https://oauth-openshift.apps.mays-demo.sandbox4175.opentlc.com/oauth2callback/*'
+          - 'https://oauth-openshift.apps.mays-demo.sandbox4175.opentlc.com/*'
         clientId: openshift
         optionalClientScopes:
           - address
@@ -315,10 +316,15 @@ spec:
         secret: '${OPENSHIFT_OAUTH_CLIENT_SECRET}'
         publicClient: false
         standardFlowEnabled: true
+        implicitFlowEnabled: false
+        directAccessGrantsEnabled: true
+        serviceAccountsEnabled: false
         protocol: openid-connect
         webOrigins:
           - 'https://oauth-openshift.apps.mays-demo.sandbox4175.opentlc.com'
-        directAccessGrantsEnabled: true
+          - '+'
+        attributes:
+          'pkce.code.challenge.method': S256
     enabled: true
     groups:
       - name: cluster-admins
