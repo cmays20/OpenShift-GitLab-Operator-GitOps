@@ -5,3 +5,4 @@ resources:
   - ../../keycloak
   - ../../vault
   - ../../vault-secrets-operator
+  - ../../oauth
