@@ -5,3 +5,4 @@ resources:
   - oauth.yaml
   - groups.yaml
   - vault-secret.yaml
+  - argocd-oauth-client.yaml

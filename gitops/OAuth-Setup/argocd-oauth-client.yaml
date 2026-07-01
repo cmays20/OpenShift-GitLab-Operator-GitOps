@@ -1,0 +1,8 @@
+apiVersion: oauth.openshift.io/v1
+kind: OAuthClient
+metadata:
+  name: openshift-gitops-client
+grantMethod: auto
+redirectURIs:
+  - https://openshift-gitops-server-openshift-gitops.apps.mays-demo.sandbox4175.opentlc.com/api/dex/callback
+secret: ""
