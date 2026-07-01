@@ -238,6 +238,17 @@ data:
 
     echo "Kubernetes auth method configured successfully"
 
+    # Enable KV v2 secrets engine
+    echo "=== Enabling KV v2 Secrets Engine ==="
+
+    if oc exec vault-0 -n vault -- sh -c "VAULT_TOKEN=$ROOT_TOKEN vault secrets list" 2>&1 | grep -q "^secret/"; then
+      echo "KV v2 secrets engine already enabled at secret/"
+    else
+      echo "Enabling KV v2 secrets engine at secret/..."
+      oc exec vault-0 -n vault -- sh -c "VAULT_TOKEN=$ROOT_TOKEN vault secrets enable -path=secret kv-v2"
+      echo "KV v2 secrets engine enabled successfully"
+    fi
+
     # Create policy for Vault Secrets Operator
     echo "Creating policy for Vault Secrets Operator..."
 
