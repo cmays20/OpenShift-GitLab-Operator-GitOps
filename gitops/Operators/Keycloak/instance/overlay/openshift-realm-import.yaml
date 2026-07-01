@@ -322,7 +322,6 @@ spec:
         protocol: openid-connect
         webOrigins:
           - 'https://oauth-openshift.apps.mays-demo.sandbox4175.opentlc.com'
-          - '+'
         attributes:
           'pkce.code.challenge.method': S256
     enabled: true
