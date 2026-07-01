@@ -5,6 +5,5 @@ commonAnnotations:
   argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 
 resources:
-  - service-account.yaml
   - vault-connection.yaml
   - vault-auth.yaml

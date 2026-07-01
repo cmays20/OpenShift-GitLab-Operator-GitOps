@@ -19,8 +19,8 @@ spec:
     # Role created in vault-init job
     role: vault-secrets-operator
 
-    # Service account in the vault namespace
-    serviceAccount: vault-auth
+    # Use default service account from the namespace where VaultStaticSecret is created
+    serviceAccount: default
 
     # Token audience (optional, but recommended for security)
     audiences:

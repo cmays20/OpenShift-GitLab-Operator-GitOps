@@ -273,12 +273,10 @@ data:
     echo "Creating Kubernetes auth role for Vault Secrets Operator..."
 
     VSO_ROLE="vault-secrets-operator"
-    VSO_NAMESPACE="vault"
-    VSO_SA="vault-auth"
 
     oc exec vault-0 -n vault -- sh -c "VAULT_TOKEN=$ROOT_TOKEN vault write auth/kubernetes/role/$VSO_ROLE \
-      bound_service_account_names=$VSO_SA \
-      bound_service_account_namespaces=$VSO_NAMESPACE \
+      bound_service_account_names=default \
+      bound_service_account_namespaces=keycloak,openshift-config,vault \
       policies=$POLICY_NAME \
       ttl=24h"
 
