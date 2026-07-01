@@ -297,6 +297,33 @@ spec:
         clientAuthenticatorType: client-secret
         fullScopeAllowed: true
         redirectUris:
+          - 'https://openshift-gitops-server-openshift-gitops.apps.mays-demo.sandbox4175.opentlc.com/api/dex/callback'
+        clientId: system:serviceaccount:openshift-gitops:openshift-gitops-argocd-dex-server
+        optionalClientScopes:
+          - address
+          - phone
+          - offline_access
+          - organization
+          - microprofile-jwt
+        defaultClientScopes:
+          - web-origins
+          - acr
+          - roles
+          - profile
+          - basic
+          - email
+        publicClient: true
+        standardFlowEnabled: true
+        implicitFlowEnabled: false
+        directAccessGrantsEnabled: false
+        serviceAccountsEnabled: false
+        protocol: openid-connect
+        webOrigins:
+          - 'https://openshift-gitops-server-openshift-gitops.apps.mays-demo.sandbox4175.opentlc.com'
+      - enabled: true
+        clientAuthenticatorType: client-secret
+        fullScopeAllowed: true
+        redirectUris:
           - 'https://oauth-openshift.apps.mays-demo.sandbox4175.opentlc.com/oauth2callback/*'
           - 'https://oauth-openshift.apps.mays-demo.sandbox4175.opentlc.com/*'
         clientId: openshift
@@ -322,8 +349,6 @@ spec:
         protocol: openid-connect
         webOrigins:
           - 'https://oauth-openshift.apps.mays-demo.sandbox4175.opentlc.com'
-        attributes:
-          'pkce.code.challenge.method': S256
     enabled: true
     groups:
       - name: cluster-admins
