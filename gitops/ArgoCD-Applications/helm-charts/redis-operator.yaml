@@ -20,7 +20,7 @@ spec:
         valueFiles:
           - $values/gitops/ArgoCD-Applications/helm-charts/redis-values/redis-values.yaml
     - repoURL: 'GITREPO'
-    - targetRevision: REVISION
+      targetRevision: REVISION
       path: gitops/ArgoCD-Applications/helm-charts/redis-values
       ref: values
   syncPolicy:

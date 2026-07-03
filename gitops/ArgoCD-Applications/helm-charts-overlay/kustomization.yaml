@@ -2,7 +2,7 @@ resources:
   - ../helm-charts
 
 configMapGenerator:
-  - name: git-config
+  - name: git-config-helm
     namespace: openshift-gitops
     literals:
       - GIT_REPO_URL=https://github.com/cmays20/OpenShift-GitLab-Operator-GitOps.git
@@ -11,7 +11,7 @@ configMapGenerator:
 replacements:
   - source:
       kind: ConfigMap
-      name: git-config
+      name: git-config-helm
       fieldPath: data.GIT_REPO_URL
     targets:
       - select:
@@ -22,7 +22,7 @@ replacements:
           create: false
   - source:
       kind: ConfigMap
-      name: git-config
+      name: git-config-helm
       fieldPath: data.GIT_REVISION
     targets:
       - select:
