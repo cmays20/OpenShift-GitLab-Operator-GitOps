@@ -19,8 +19,8 @@ spec:
         releaseName: vault
         valueFiles:
           - $values/gitops/ArgoCD-Applications/helm-charts/vault-values/vault-values.yaml
-    - repoURL: https://github.com/cmays20/OpenShift-GitLab-Operator-GitOps.git
-      targetRevision: HEAD
+    - repoURL: 'GITREPO'
+    - targetRevision: REVISION
       path: gitops/ArgoCD-Applications/helm-charts/vault-values
       ref: values
   ignoreDifferences:

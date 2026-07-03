@@ -7,3 +7,5 @@ resources:
   - vault-secrets-operator.yaml
   - web-terminal.yaml
   - oauth.yaml
+  - vault-init.yaml
+  - vault-seed-secrets.yaml

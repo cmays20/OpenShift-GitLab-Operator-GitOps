@@ -1,0 +1,33 @@
+resources:
+  - ../helm-charts
+
+configMapGenerator:
+  - name: git-config
+    namespace: openshift-gitops
+    literals:
+      - GIT_REPO_URL=https://github.com/cmays20/OpenShift-GitLab-Operator-GitOps.git
+      - GIT_REVISION=HEAD
+
+replacements:
+  - source:
+      kind: ConfigMap
+      name: git-config
+      fieldPath: data.GIT_REPO_URL
+    targets:
+      - select:
+          kind: Application
+        fieldPaths:
+          - spec.sources.[1].repoURL
+        options:
+          create: false
+  - source:
+      kind: ConfigMap
+      name: git-config
+      fieldPath: data.GIT_REVISION
+    targets:
+      - select:
+          kind: Application
+        fieldPaths:
+          - spec.sources.[1].targetRevision
+        options:
+          create: false

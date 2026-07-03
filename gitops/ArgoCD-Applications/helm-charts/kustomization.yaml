@@ -1,5 +1,3 @@
 resources:
   - redis-operator.yaml
   - vault.yaml
-  - vault-init.yaml
-  - vault-seed-secrets.yaml
