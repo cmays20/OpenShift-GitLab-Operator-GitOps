@@ -1,3 +1,0 @@
-resources:
-  - argocd-oauth-clusterrole.yaml
-  - argocd-oauth-clusterrolebinding.yaml
