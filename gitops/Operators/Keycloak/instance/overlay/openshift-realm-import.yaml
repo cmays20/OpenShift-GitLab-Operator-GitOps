@@ -297,7 +297,7 @@ spec:
         clientAuthenticatorType: client-secret
         fullScopeAllowed: true
         redirectUris:
-          - 'https://openshift-gitops-server-openshift-gitops.apps.mays-demo.sandbox4175.opentlc.com/api/dex/callback'
+          - 'https://openshift-gitops-server-openshift-gitops.apps.mays-demo.sandbox1614.opentlc.com/api/dex/callback'
         clientId: system:serviceaccount:openshift-gitops:openshift-gitops-argocd-dex-server
         optionalClientScopes:
           - address
@@ -319,13 +319,13 @@ spec:
         serviceAccountsEnabled: false
         protocol: openid-connect
         webOrigins:
-          - 'https://openshift-gitops-server-openshift-gitops.apps.mays-demo.sandbox4175.opentlc.com'
+          - 'https://openshift-gitops-server-openshift-gitops.apps.mays-demo.sandbox1614.opentlc.com'
       - enabled: true
         clientAuthenticatorType: client-secret
         fullScopeAllowed: true
         redirectUris:
-          - 'https://oauth-openshift.apps.mays-demo.sandbox4175.opentlc.com/oauth2callback/*'
-          - 'https://oauth-openshift.apps.mays-demo.sandbox4175.opentlc.com/*'
+          - 'https://oauth-openshift.apps.mays-demo.sandbox1614.opentlc.com/oauth2callback/*'
+          - 'https://oauth-openshift.apps.mays-demo.sandbox1614.opentlc.com/*'
         clientId: openshift
         optionalClientScopes:
           - address
@@ -348,7 +348,7 @@ spec:
         serviceAccountsEnabled: false
         protocol: openid-connect
         webOrigins:
-          - 'https://oauth-openshift.apps.mays-demo.sandbox4175.opentlc.com'
+          - 'https://oauth-openshift.apps.mays-demo.sandbox1614.opentlc.com'
     enabled: true
     groups:
       - name: cluster-admins
