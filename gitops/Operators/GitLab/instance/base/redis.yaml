@@ -1,0 +1,45 @@
+apiVersion: redis.redis.opstreelabs.in/v1beta2
+kind: Redis
+metadata:
+  name: redis-gitlab
+  namespace: gitlab-system
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  kubernetesConfig:
+    image: 'quay.io/opstree/redis:v7.0.15'
+    imagePullPolicy: IfNotPresent
+    resources:
+      limits:
+        cpu: '1'
+        memory: 1Gi
+      requests:
+        cpu: 200m
+        memory: 512Mi
+    updateStrategy: {}
+  podSecurityContext:
+    fsGroup: 1000
+    runAsUser: 1000
+  redisExporter:
+    enabled: true
+    image: 'quay.io/opstree/redis-exporter:v1.44.0'
+    imagePullPolicy: IfNotPresent
+    port: 9121
+    resources:
+      limits:
+        cpu: 100m
+        memory: 128Mi
+      requests:
+        cpu: 50m
+        memory: 64Mi
+  storage:
+    volumeClaimTemplate:
+      metadata: {}
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 5Gi
+      status: {}
+    volumeMount: {}

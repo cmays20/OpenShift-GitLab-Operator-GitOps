@@ -1,0 +1,136 @@
+apiVersion: apps.gitlab.com/v1beta1
+kind: GitLab
+metadata:
+  name: gitlab
+  namespace: gitlab-system
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  chart:
+    values:
+      gitlab:
+        gitlab-shell:
+          maxReplicas: 2
+          minReplicas: 1
+        sidekiq:
+          maxReplicas: 2
+          minReplicas: 1
+          resources:
+            requests:
+              cpu: 500m
+              memory: 1000Mi
+        toolbox:
+          backups:
+            objectStorage:
+              config:
+                key: config
+                secret: gitlab-backups
+        webservice:
+          maxReplicas: 2
+          minReplicas: 1
+          resources:
+            requests:
+              cpu: 500m
+              memory: 1500Mi
+      global:
+        appConfig:
+          artifacts:
+            bucket: gitlab-artifacts
+            connection:
+              key: config
+              secret: gitlab-artifacts
+          object_store:
+            enabled: false
+          externalDiffs:
+            bucket: gitlab-mr-diffs
+            connection:
+              key: config
+              secret: gitlab-mr-diffs
+            enabled: true
+          dependencyProxy:
+            bucket: gitlab-dependency-proxy
+            connection:
+              key: config
+              secret: gitlab-dependency-proxy
+            enabled: true
+          pages:
+            bucket: gitlab-pages
+            connection:
+              key: config
+              secret: gitlab-pages
+          agentPlanContent:
+            bucket: gitlab-agent-plan-content
+            connection:
+              key: config
+              secret: gitlab-agent-plan-content
+            enabled: true
+          packages:
+            bucket: gitlab-packages
+            connection:
+              key: config
+              secret: gitlab-packages
+          backups:
+            bucket: gitlab-backups
+            connection:
+              key: config
+              secret: gitlab-backups
+            tmpBucket: gitlab-tmp
+            tmpConnection:
+              key: config
+              secret: gitlab-tmp
+          uploads:
+            bucket: gitlab-uploads
+            connection:
+              key: config
+              secret: gitlab-uploads
+          lfs:
+            bucket: gitlab-lfs
+            connection:
+              key: config
+              secret: gitlab-lfs
+          ciSecureFiles:
+            bucket: gitlab-ci-secure-files
+            connection:
+              key: config
+              secret: gitlab-ci-secure-files
+            enabled: true
+          terraformState:
+            bucket: gitlab-terraform-state
+            connection:
+              key: config
+              secret: gitlab-terraform-state
+            enabled: true
+        gatewayApi:
+          configureCertmanager: false
+          enabled: false
+          installEnvoy: false
+        hosts:
+          domain: apps.mays-demo.sandbox5321.opentlc.com
+        ingress:
+          annotations:
+            route.openshift.io/termination: edge
+          class: none
+          configureCertmanager: false
+          enabled: true
+        psql:
+          database: gitlab
+          host: cluster-pg-gitlab-rw.gitlab-system.svc.cluster.local
+          password:
+            key: password
+            secret: cluster-pg-gitlab-app
+          username: gitlab
+        redis:
+          auth:
+            enabled: false
+          host: gitlab-redis.gitlab-system.svc.cluster.local
+      installCertmanager: false
+      nginx-ingress:
+        enabled: false
+      registry:
+        storage:
+          key: config
+          secret: gitlab-registry-storage
+      runner:
+        cache:
+          bucket: gitlab-runner-cache-6a48ae43-0d6c-492c-af04-ec9783d844e7
+    version: 10.1.1

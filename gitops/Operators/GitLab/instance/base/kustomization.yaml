@@ -1,0 +1,6 @@
+resources:
+  - object-bucket-claims.yaml
+  - redis.yaml
+  - redis-scc.yaml
+  - postgres-cluster.yaml
+  - gitlab.yaml
