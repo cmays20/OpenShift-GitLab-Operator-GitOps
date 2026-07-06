@@ -122,7 +122,7 @@ spec:
         redis:
           auth:
             enabled: false
-          host: gitlab-redis.gitlab-system.svc.cluster.local
+          host: redis-gitlab.gitlab-system.svc.cluster.local
       installCertmanager: false
       nginx-ingress:
         enabled: false
