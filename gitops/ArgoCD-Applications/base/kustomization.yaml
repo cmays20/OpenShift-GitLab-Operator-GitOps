@@ -9,3 +9,4 @@ resources:
   - oauth.yaml
   - vault-init.yaml
   - vault-seed-secrets.yaml
+  - gitlab.yaml

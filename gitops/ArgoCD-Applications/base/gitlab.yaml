@@ -1,16 +1,16 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: odf-lite
+  name: gitlab
   namespace: openshift-gitops
   annotations:
-    argocd.argoproj.io/sync-wave: "1"
+    argocd.argoproj.io/sync-wave: "4"
 spec:
   destination:
     server: 'https://kubernetes.default.svc'
   project: default
   source:
-    path: gitops/Operators/ODF/aggregate/aws-multiCloudGateway
+    path: gitops/Operators/GitLab/operator
     repoURL: 'GITREPO'
     targetRevision: REVISION
   syncPolicy:
