@@ -26,12 +26,19 @@ spec:
                 key: config
                 secret: gitlab-backups
         webservice:
+          ingress:
+            tls:
+              secretName: RELEASE-gitlab-tls
           maxReplicas: 2
           minReplicas: 1
           resources:
             requests:
               cpu: 500m
               memory: 1500Mi
+        kas:
+          ingress:
+            tls:
+              secretName: RELEASE-kas-tls
       global:
         appConfig:
           artifacts:
@@ -108,13 +115,12 @@ spec:
           domain: apps.mays-demo.sandbox3446.opentlc.com
         ingress:
           annotations:
-            route.openshift.io/termination: reencrypt
+            route.openshift.io/termination: edge
+            kubernetes.io/tls-acme: "true"
             cert-manager.io/cluster-issuer: acme-prod-issuer
           class: none
-          configureCertmanager: true
+          configureCertmanager: false
           enabled: true
-          tls:
-            enabled: true
         psql:
           database: gitlab
           host: cluster-pg-gitlab-rw.gitlab-system.svc.cluster.local
@@ -132,6 +138,9 @@ spec:
       prometheus:
         install: false
       registry:
+        ingress:
+          tls:
+            secretName: RELEASE-registry-tls
         storage:
           key: config
           secret: gitlab-registry-storage
