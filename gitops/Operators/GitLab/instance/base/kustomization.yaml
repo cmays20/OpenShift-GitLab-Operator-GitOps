@@ -3,4 +3,5 @@ resources:
   - redis.yaml
   - redis-scc.yaml
   - postgres-cluster.yaml
+  - create-object-storage-secrets-job.yaml
   - gitlab.yaml

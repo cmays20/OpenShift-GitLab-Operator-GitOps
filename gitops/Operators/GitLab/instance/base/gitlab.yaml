@@ -4,7 +4,7 @@ metadata:
   name: gitlab
   namespace: gitlab-system
   annotations:
-    argocd.argoproj.io/sync-wave: "2"
+    argocd.argoproj.io/sync-wave: "4"
 spec:
   chart:
     values:
@@ -129,8 +129,8 @@ spec:
       registry:
         storage:
           key: config
-          secret: gitlab-registry-storage
+          secret: gitlab-registry
       runner:
         cache:
-          bucket: gitlab-runner-cache-6a48ae43-0d6c-492c-af04-ec9783d844e7
+          bucket: gitlab-runner-cache
     version: 10.1.1
