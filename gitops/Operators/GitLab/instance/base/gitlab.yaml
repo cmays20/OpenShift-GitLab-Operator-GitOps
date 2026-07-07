@@ -108,10 +108,13 @@ spec:
           domain: apps.mays-demo.sandbox3446.opentlc.com
         ingress:
           annotations:
-            route.openshift.io/termination: edge
+            route.openshift.io/termination: reencrypt
+            cert-manager.io/cluster-issuer: acme-prod-issuer
           class: none
-          configureCertmanager: false
+          configureCertmanager: true
           enabled: true
+          tls:
+            enabled: true
         psql:
           database: gitlab
           host: cluster-pg-gitlab-rw.gitlab-system.svc.cluster.local
