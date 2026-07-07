@@ -129,8 +129,11 @@ spec:
       registry:
         storage:
           key: config
-          secret: gitlab-registry
+          secret: gitlab-registry-storage
       runner:
         cache:
           bucket: gitlab-runner-cache
+          connection:
+            key: config
+            secret: gitlab-runner-cache
     version: 10.1.1
