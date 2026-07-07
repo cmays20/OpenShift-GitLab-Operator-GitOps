@@ -28,7 +28,7 @@ spec:
         webservice:
           ingress:
             tls:
-              secretName: RELEASE-gitlab-tls
+              secretName: gitlab-acme-tls
           maxReplicas: 2
           minReplicas: 1
           resources:
@@ -38,7 +38,7 @@ spec:
         kas:
           ingress:
             tls:
-              secretName: RELEASE-kas-tls
+              secretName: kas-acme-tls
       global:
         appConfig:
           artifacts:
@@ -140,7 +140,7 @@ spec:
       registry:
         ingress:
           tls:
-            secretName: RELEASE-registry-tls
+            secretName: registry-acme-tls
         storage:
           key: config
           secret: gitlab-registry-storage
