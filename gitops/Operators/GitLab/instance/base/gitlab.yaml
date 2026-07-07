@@ -126,6 +126,8 @@ spec:
       installCertmanager: false
       nginx-ingress:
         enabled: false
+      prometheus:
+        install: false
       registry:
         storage:
           key: config
