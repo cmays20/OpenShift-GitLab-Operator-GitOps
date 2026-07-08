@@ -4,4 +4,7 @@ resources:
   - redis-scc.yaml
   - postgres-cluster.yaml
   - create-object-storage-secrets-job.yaml
+  - vault-gitlab-secrets.yaml
+  - create-omniauth-secret-job.yaml
+  - gitlab-realm-import.yaml
   - gitlab.yaml
