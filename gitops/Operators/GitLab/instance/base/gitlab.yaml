@@ -107,6 +107,14 @@ spec:
               key: config
               secret: gitlab-terraform-state
             enabled: true
+          omniauth:
+            enabled: true
+            allowSingleSignOn: ['openid_connect']
+            blockAutoCreatedUsers: false
+            autoLinkUser: ['openid_connect']
+            providers:
+              - secret: gitlab-omniauth-provider
+                key: provider
         gatewayApi:
           configureCertmanager: false
           enabled: false
@@ -121,14 +129,6 @@ spec:
           class: none
           configureCertmanager: false
           enabled: true
-        omniauth:
-          enabled: true
-          allowSingleSignOn: ['openid_connect']
-          blockAutoCreatedUsers: false
-          autoLinkUser: ['openid_connect']
-          providers:
-            - secret: gitlab-omniauth-provider
-              key: provider
         psql:
           database: gitlab
           host: cluster-pg-gitlab-rw.gitlab-system.svc.cluster.local
