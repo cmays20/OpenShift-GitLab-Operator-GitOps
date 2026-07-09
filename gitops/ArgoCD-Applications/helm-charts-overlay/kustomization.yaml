@@ -9,6 +9,7 @@ configMapGenerator:
       - GIT_REVISION=HEAD
 
 replacements:
+  # Patch second source (sources[1]) for ALL Applications
   - source:
       kind: ConfigMap
       name: git-config-helm
@@ -18,7 +19,6 @@ replacements:
           kind: Application
         fieldPaths:
           - spec.sources.1.repoURL
-          - spec.sources.2.repoURL
         options:
           create: false
   - source:
@@ -30,6 +30,31 @@ replacements:
           kind: Application
         fieldPaths:
           - spec.sources.1.targetRevision
+        options:
+          create: false
+
+  # Patch third source (sources[2]) ONLY for Applications with 3 sources
+  - source:
+      kind: ConfigMap
+      name: git-config-helm
+      fieldPath: data.GIT_REPO_URL
+    targets:
+      - select:
+          kind: Application
+          name: redis-operator
+        fieldPaths:
+          - spec.sources.2.repoURL
+        options:
+          create: false
+  - source:
+      kind: ConfigMap
+      name: git-config-helm
+      fieldPath: data.GIT_REVISION
+    targets:
+      - select:
+          kind: Application
+          name: redis-operator
+        fieldPaths:
           - spec.sources.2.targetRevision
         options:
           create: false
