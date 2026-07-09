@@ -25,9 +25,7 @@ spec:
       ref: values
     - repoURL: 'GITREPO'
       targetRevision: REVISION
-      path: gitops/ArgoCD-Applications/helm-charts/redis-values
-      directory:
-        include: '{fix-redis-clusterrole-rbac.yaml,fix-redis-operator-clusterrole.yaml}'
+      path: gitops/ArgoCD-Applications/helm-charts/redis-operator-fixes
   syncPolicy:
     automated:
       selfHeal: true
