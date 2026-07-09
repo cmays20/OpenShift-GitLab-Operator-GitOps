@@ -18,6 +18,7 @@ replacements:
           kind: Application
         fieldPaths:
           - spec.sources.1.repoURL
+          - spec.sources.2.repoURL
         options:
           create: false
   - source:
@@ -29,5 +30,6 @@ replacements:
           kind: Application
         fieldPaths:
           - spec.sources.1.targetRevision
+          - spec.sources.2.targetRevision
         options:
           create: false
