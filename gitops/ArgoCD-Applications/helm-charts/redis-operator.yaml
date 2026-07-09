@@ -23,6 +23,11 @@ spec:
       targetRevision: REVISION
       path: gitops/ArgoCD-Applications/helm-charts/redis-values
       ref: values
+    - repoURL: 'GITREPO'
+      targetRevision: REVISION
+      path: gitops/ArgoCD-Applications/helm-charts/redis-values
+      directory:
+        include: '{fix-redis-clusterrole-rbac.yaml,fix-redis-operator-clusterrole.yaml}'
   syncPolicy:
     automated:
       selfHeal: true

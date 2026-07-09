@@ -1,0 +1,35 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: redis-clusterrole-fixer
+  namespace: ot-operators
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: redis-clusterrole-fixer
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+rules:
+  - apiGroups: ["rbac.authorization.k8s.io"]
+    resources: ["clusterroles"]
+    resourceNames: ["redis-operator"]
+    verbs: ["get", "patch", "update"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: redis-clusterrole-fixer
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+subjects:
+  - kind: ServiceAccount
+    name: redis-clusterrole-fixer
+    namespace: ot-operators
+roleRef:
+  kind: ClusterRole
+  name: redis-clusterrole-fixer
+  apiGroup: rbac.authorization.k8s.io

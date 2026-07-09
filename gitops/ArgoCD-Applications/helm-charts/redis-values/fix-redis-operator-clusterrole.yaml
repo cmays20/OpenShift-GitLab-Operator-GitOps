@@ -1,0 +1,45 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: fix-redis-operator-clusterrole
+  namespace: ot-operators
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+    argocd.argoproj.io/hook: Sync
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
+spec:
+  ttlSecondsAfterFinished: 300
+  template:
+    spec:
+      serviceAccountName: redis-clusterrole-fixer
+      restartPolicy: OnFailure
+      containers:
+        - name: fix-clusterrole
+          image: registry.redhat.io/openshift4/ose-cli:latest
+          command:
+            - /bin/bash
+            - -c
+            - |
+              #!/bin/bash
+              set -e
+
+              echo "Fixing redis-operator ClusterRole..."
+
+              # Remove the aggregate-to-admin label (prevents pollution of admin ClusterRole)
+              echo "Removing aggregate-to-admin label..."
+              oc label clusterrole redis-operator rbac.authorization.k8s.io/aggregate-to-admin- || echo "Label already removed"
+
+              # Remove the nonResourceURLs rule (invalid for namespace-scoped usage)
+              echo "Removing nonResourceURLs rule..."
+              oc get clusterrole redis-operator -o json | \
+                jq 'del(.rules[] | select(.nonResourceURLs != null))' | \
+                oc apply -f - || echo "Rule already removed"
+
+              echo "✓ redis-operator ClusterRole fixed!"
+              echo ""
+              echo "Changes made:"
+              echo "1. Removed 'rbac.authorization.k8s.io/aggregate-to-admin: true' label"
+              echo "2. Removed 'nonResourceURLs: [\"*\"]' rule"
+              echo ""
+              echo "This prevents the redis-operator from polluting the admin ClusterRole"
