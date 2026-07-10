@@ -3,4 +3,5 @@ kind: Kustomization
 
 resources:
   - ../operator
+  - ../cross-namespace-rbac
   - ../instance/base
