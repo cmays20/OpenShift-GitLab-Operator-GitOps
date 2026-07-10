@@ -7,7 +7,7 @@ rules:
     resources: ["objectbucketclaims"]
     verbs: ["*"]
   - apiGroups: ["apps.gitlab.com"]
-    resources: ["gitlabs"]
+    resources: ["gitlabs", "runners"]
     verbs: ["*"]
   - apiGroups: ["postgresql.cnpg.io"]
     resources: ["clusters"]
