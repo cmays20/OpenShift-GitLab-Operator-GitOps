@@ -263,6 +263,9 @@ data:
     path "secret/data/gitlab/*" {
       capabilities = ["read", "list"]
     }
+    path "secret/data/gitlab-runner/*" {
+      capabilities = ["read", "list"]
+    }
     path "secret/metadata/keycloak/*" {
       capabilities = ["read", "list"]
     }
@@ -270,6 +273,9 @@ data:
       capabilities = ["read", "list"]
     }
     path "secret/metadata/gitlab/*" {
+      capabilities = ["read", "list"]
+    }
+    path "secret/metadata/gitlab-runner/*" {
       capabilities = ["read", "list"]
     }' | oc exec -i vault-0 -n vault -- sh -c "VAULT_TOKEN=$ROOT_TOKEN vault policy write $POLICY_NAME -"
 
@@ -282,7 +288,7 @@ data:
 
     oc exec vault-0 -n vault -- sh -c "VAULT_TOKEN=$ROOT_TOKEN vault write auth/kubernetes/role/$VSO_ROLE \
       bound_service_account_names=default \
-      bound_service_account_namespaces=keycloak,openshift-config,vault,gitlab-system \
+      bound_service_account_namespaces=keycloak,openshift-config,vault,gitlab-system,gitlab-runner-system \
       policies=$POLICY_NAME \
       ttl=24h"
 
