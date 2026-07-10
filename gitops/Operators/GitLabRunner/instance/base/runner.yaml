@@ -11,8 +11,6 @@ spec:
   token: gitlab-runner-registration-token  # Synced from Vault via VSO
   tags: kubernetes, openshift, demo
   buildImage: registry.gitlab.com/gitlab-org/gitlab-runner/gitlab-runner-ocp:latest
-  ca:
-    configMapName: gitlab-runner-ca-cert
   config: |
     [[runners]]
       [runners.kubernetes]
