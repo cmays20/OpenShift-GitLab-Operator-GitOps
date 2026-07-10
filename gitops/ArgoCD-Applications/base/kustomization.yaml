@@ -10,3 +10,4 @@ resources:
   - vault-init.yaml
   - vault-seed-secrets.yaml
   - gitlab.yaml
+  - gitlab-runner.yaml
