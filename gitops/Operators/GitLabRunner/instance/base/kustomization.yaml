@@ -8,4 +8,5 @@ resources:
   - ca-cert-configmap.yaml
   - create-runner-token-job.yaml
   - vault-runner-token.yaml
+  - runner-config.yaml
   - runner.yaml

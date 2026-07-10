@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gitlab-runner-config
+  namespace: gitlab-runner-system
+  annotations:
+    argocd.argoproj.io/sync-wave: "6"
+data:
+  config.toml: |
+    [[runners]]
+      [runners.kubernetes]
+        image = "registry.access.redhat.com/ubi9/ubi-minimal:latest"
+        privileged = false
+        namespace = "gitlab-runner-system"
+        poll_timeout = 600
+        cpu_request = "100m"
+        memory_request = "128Mi"
+        service_cpu_request = "100m"
+        service_memory_request = "128Mi"
+        helper_cpu_request = "100m"
+        helper_memory_request = "128Mi"
+      [runners.cache]
+        Type = "s3"
+        Path = "gitlab-runner"
+        Shared = true
+        [runners.cache.s3]
+          ServerAddress = "s3.openshift-storage.svc:80"
+          BucketName = "gitlab-runner-cache"
+          Insecure = true
