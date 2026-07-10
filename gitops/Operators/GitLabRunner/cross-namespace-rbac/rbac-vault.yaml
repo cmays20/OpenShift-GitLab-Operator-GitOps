@@ -1,0 +1,33 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: gitlab-runner-token-creator-vault
+  namespace: vault
+  annotations:
+    argocd.argoproj.io/sync-wave: "4"
+rules:
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["get"]
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list"]
+  - apiGroups: [""]
+    resources: ["pods/exec"]
+    verbs: ["create"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: gitlab-runner-token-creator-vault
+  namespace: vault
+  annotations:
+    argocd.argoproj.io/sync-wave: "4"
+subjects:
+  - kind: ServiceAccount
+    name: gitlab-runner-token-creator
+    namespace: gitlab-runner-system
+roleRef:
+  kind: Role
+  name: gitlab-runner-token-creator-vault
+  apiGroup: rbac.authorization.k8s.io
