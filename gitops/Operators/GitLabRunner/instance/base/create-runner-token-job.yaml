@@ -1,0 +1,212 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: gitlab-runner-token-creator
+  namespace: gitlab-runner-system
+  annotations:
+    argocd.argoproj.io/sync-wave: "4"
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: gitlab-runner-token-creator
+  namespace: gitlab-system
+  annotations:
+    argocd.argoproj.io/sync-wave: "4"
+rules:
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: gitlab-runner-token-creator
+  namespace: gitlab-system
+  annotations:
+    argocd.argoproj.io/sync-wave: "4"
+subjects:
+  - kind: ServiceAccount
+    name: gitlab-runner-token-creator
+    namespace: gitlab-runner-system
+roleRef:
+  kind: Role
+  name: gitlab-runner-token-creator
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: gitlab-runner-token-creator-vault
+  namespace: vault
+  annotations:
+    argocd.argoproj.io/sync-wave: "4"
+rules:
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["get"]
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list"]
+  - apiGroups: [""]
+    resources: ["pods/exec"]
+    verbs: ["create"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: gitlab-runner-token-creator-vault
+  namespace: vault
+  annotations:
+    argocd.argoproj.io/sync-wave: "4"
+subjects:
+  - kind: ServiceAccount
+    name: gitlab-runner-token-creator
+    namespace: gitlab-runner-system
+roleRef:
+  kind: Role
+  name: gitlab-runner-token-creator-vault
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: create-gitlab-runner-token
+  namespace: gitlab-runner-system
+  annotations:
+    argocd.argoproj.io/sync-wave: "5"
+    argocd.argoproj.io/hook: Sync
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
+spec:
+  ttlSecondsAfterFinished: 300
+  backoffLimit: 5
+  template:
+    metadata:
+      name: create-runner-token
+    spec:
+      serviceAccountName: gitlab-runner-token-creator
+      restartPolicy: OnFailure
+      containers:
+        - name: create-token
+          image: registry.redhat.io/openshift4/ose-cli:latest
+          command:
+            - /bin/bash
+            - -c
+            - |
+              #!/bin/bash
+              set -e
+
+              GITLAB_URL="https://gitlab.apps.mays-demo.sandbox3446.opentlc.com"
+              VAULT_NAMESPACE="vault"
+
+              echo "=== GitLab Runner Token Creation ==="
+              echo "GitLab URL: $GITLAB_URL"
+              echo ""
+
+              # Wait for GitLab to be ready
+              echo "Waiting for GitLab to be ready..."
+              MAX_ATTEMPTS=60
+              ATTEMPT=0
+              while [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
+                if curl -sf "$GITLAB_URL/-/readiness" >/dev/null 2>&1; then
+                  echo "✓ GitLab is ready"
+                  break
+                fi
+                ATTEMPT=$((ATTEMPT + 1))
+                echo "Waiting... ($ATTEMPT/$MAX_ATTEMPTS)"
+                sleep 10
+              done
+
+              if [ $ATTEMPT -eq $MAX_ATTEMPTS ]; then
+                echo "ERROR: GitLab did not become ready in time"
+                exit 1
+              fi
+
+              # Get GitLab root password
+              echo "Retrieving GitLab root password..."
+              GITLAB_ROOT_PASSWORD=$(oc get secret gitlab-gitlab-initial-root-password \
+                -n gitlab-system -o jsonpath='{.data.password}' | base64 -d)
+
+              if [ -z "$GITLAB_ROOT_PASSWORD" ]; then
+                echo "ERROR: Could not retrieve GitLab root password"
+                exit 1
+              fi
+
+              echo "✓ GitLab root password retrieved"
+
+              # Create a root API token (if not exists)
+              echo "Creating GitLab root API token..."
+
+              # First, get a session token by logging in
+              CSRF_TOKEN=$(curl -s -c /tmp/cookies.txt "$GITLAB_URL/users/sign_in" | \
+                grep 'csrf-token' | sed -n 's/.*content="\([^"]*\)".*/\1/p' | head -1)
+
+              if [ -z "$CSRF_TOKEN" ]; then
+                echo "ERROR: Could not get CSRF token"
+                exit 1
+              fi
+
+              # Login to get session
+              curl -s -b /tmp/cookies.txt -c /tmp/cookies.txt \
+                -X POST "$GITLAB_URL/users/sign_in" \
+                -H "Content-Type: application/x-www-form-urlencoded" \
+                --data-urlencode "user[login]=root" \
+                --data-urlencode "user[password]=$GITLAB_ROOT_PASSWORD" \
+                --data-urlencode "authenticity_token=$CSRF_TOKEN" \
+                >/dev/null
+
+              # Create personal access token via API (requires GitLab 16.0+)
+              # Using rails runner as fallback for older versions
+              echo "Creating runner authentication token via GitLab Rails..."
+
+              RUNNER_TOKEN=$(oc exec -n gitlab-system deployment/gitlab-toolbox -- \
+                gitlab-rails runner "
+                  token = Ci::Runner.create!(
+                    runner_type: 'instance_type',
+                    description: 'OpenShift Kubernetes Runner',
+                    tag_list: ['kubernetes', 'openshift', 'demo'],
+                    run_untagged: false,
+                    locked: false
+                  ).token
+                  puts token
+                " 2>/dev/null | tail -1)
+
+              if [ -z "$RUNNER_TOKEN" ]; then
+                echo "ERROR: Failed to create runner token"
+                exit 1
+              fi
+
+              echo "✓ Runner token created: ${RUNNER_TOKEN:0:10}..."
+
+              # Store token in Vault
+              echo "Storing runner token in Vault..."
+
+              # Get Vault root token
+              ROOT_TOKEN=$(oc get secret vault-unseal-keys -n "$VAULT_NAMESPACE" \
+                -o jsonpath='{.data.root-token}' | base64 -d)
+
+              if [ -z "$ROOT_TOKEN" ]; then
+                echo "ERROR: Could not retrieve Vault root token"
+                exit 1
+              fi
+
+              # Check if token already exists in Vault
+              if oc exec vault-0 -n "$VAULT_NAMESPACE" -- \
+                sh -c "VAULT_TOKEN=$ROOT_TOKEN vault kv get secret/gitlab-runner/registration-token" \
+                >/dev/null 2>&1; then
+                echo "⚠ Runner token already exists in Vault, skipping"
+              else
+                # Store the token in Vault
+                oc exec vault-0 -n "$VAULT_NAMESPACE" -- \
+                  sh -c "VAULT_TOKEN=$ROOT_TOKEN vault kv put secret/gitlab-runner/registration-token \
+                  runner-registration-token='$RUNNER_TOKEN'"
+
+                echo "✓ Runner token stored in Vault at: secret/gitlab-runner/registration-token"
+              fi
+
+              echo ""
+              echo "=== GitLab Runner Token Creation Complete ==="
+              echo ""
+              echo "The runner token has been created and stored in Vault."
+              echo "VSO will sync it to the gitlab-runner-system namespace."
+              echo ""

@@ -1,0 +1,8 @@
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  name: gitlab-runner-operator
+  namespace: gitlab-runner-system
+spec:
+  targetNamespaces:
+    - gitlab-runner-system

@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gitlab-runner-ca-cert
+  namespace: gitlab-runner-system
+  annotations:
+    argocd.argoproj.io/sync-wave: "4"
+data:
+  # This will be populated with the GitLab CA certificate if using custom certs
+  # For Let's Encrypt certs, this can remain empty as they are publicly trusted
+  ca.crt: ""

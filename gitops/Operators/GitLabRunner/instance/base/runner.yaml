@@ -1,0 +1,35 @@
+apiVersion: apps.gitlab.com/v1beta2
+kind: Runner
+metadata:
+  name: gitlab-runner
+  namespace: gitlab-runner-system
+  annotations:
+    argocd.argoproj.io/sync-wave: "7"
+spec:
+  gitlabUrl: https://gitlab.apps.mays-demo.sandbox3446.opentlc.com
+  token: gitlab-runner-registration-token  # Synced from Vault via VSO
+  tags: kubernetes, openshift, demo
+  buildImage: registry.gitlab.com/gitlab-org/gitlab-runner/gitlab-runner-ocp:latest
+  ca:
+    configMapName: gitlab-runner-ca-cert
+  config: |
+    [[runners]]
+      [runners.kubernetes]
+        image = "registry.access.redhat.com/ubi9/ubi-minimal:latest"
+        privileged = false
+        namespace = "gitlab-runner-system"
+        poll_timeout = 600
+        cpu_request = "100m"
+        memory_request = "128Mi"
+        service_cpu_request = "100m"
+        service_memory_request = "128Mi"
+        helper_cpu_request = "100m"
+        helper_memory_request = "128Mi"
+      [runners.cache]
+        Type = "s3"
+        Path = "gitlab-runner"
+        Shared = true
+        [runners.cache.s3]
+          ServerAddress = "s3.openshift-storage.svc:80"
+          BucketName = "gitlab-runner-cache"
+          Insecure = true

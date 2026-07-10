@@ -1,0 +1,19 @@
+---
+# Sync GitLab Runner registration token from Vault
+apiVersion: secrets.hashicorp.com/v1beta1
+kind: VaultStaticSecret
+metadata:
+  name: gitlab-runner-registration-token
+  namespace: gitlab-runner-system
+  annotations:
+    argocd.argoproj.io/sync-wave: "6"
+spec:
+  vaultAuthRef: vault/vault-auth
+  mount: secret
+  type: kv-v2
+  path: gitlab-runner/registration-token
+  refreshAfter: 30s
+
+  destination:
+    name: gitlab-runner-registration-token
+    create: true
