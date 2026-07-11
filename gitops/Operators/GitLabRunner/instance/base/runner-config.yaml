@@ -7,7 +7,14 @@ metadata:
     argocd.argoproj.io/sync-wave: "6"
 data:
   config.toml: |
+    concurrent = 10
+    check_interval = 3
+
     [[runners]]
+      name = "openshift-runner"
+      url = "https://gitlab.apps.mays-demo.sandbox3446.opentlc.com"
+      token = "$RUNNER_TOKEN"
+      executor = "kubernetes"
       [runners.kubernetes]
         image = "registry.access.redhat.com/ubi9/ubi-minimal:latest"
         privileged = false
