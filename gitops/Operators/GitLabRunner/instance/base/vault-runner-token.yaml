@@ -17,3 +17,7 @@ spec:
   destination:
     name: gitlab-runner-registration-token
     create: true
+    transformation:
+      templates:
+        runner-token:
+          text: "{{ get .Secrets \"runner-registration-token\" }}"
