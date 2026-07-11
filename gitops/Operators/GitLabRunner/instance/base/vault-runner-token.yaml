@@ -18,7 +18,8 @@ spec:
     name: gitlab-runner-registration-token
     create: true
     transformation:
-      excludeRaw: true
+      excludes:
+        - runner-registration-token
       templates:
         runner-token:
           text: "{{ get .Secrets \"runner-registration-token\" }}"
