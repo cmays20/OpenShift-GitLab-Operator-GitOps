@@ -91,8 +91,14 @@ spec:
                 --data-urlencode "authenticity_token=$CSRF_TOKEN" \
                 >/dev/null
 
-              # Create personal access token via API (requires GitLab 16.0+)
-              # Using rails runner as fallback for older versions
+              # Delete existing OpenShift runner if it exists
+              echo "Cleaning up any existing OpenShift runner..."
+              oc exec -n gitlab-system deployment/gitlab-toolbox -- \
+                gitlab-rails runner "
+                  Ci::Runner.where(description: 'OpenShift Kubernetes Runner').destroy_all
+                " 2>/dev/null || true
+
+              # Create new runner via GitLab Rails
               echo "Creating runner authentication token via GitLab Rails..."
 
               RUNNER_TOKEN=$(oc exec -n gitlab-system deployment/gitlab-toolbox -- \
@@ -126,19 +132,12 @@ spec:
                 exit 1
               fi
 
-              # Check if token already exists in Vault
-              if oc exec vault-0 -n "$VAULT_NAMESPACE" -- \
-                sh -c "VAULT_TOKEN=$ROOT_TOKEN vault kv get secret/gitlab-runner/registration-token" \
-                >/dev/null 2>&1; then
-                echo "⚠ Runner token already exists in Vault, skipping"
-              else
-                # Store the token in Vault
-                oc exec vault-0 -n "$VAULT_NAMESPACE" -- \
-                  sh -c "VAULT_TOKEN=$ROOT_TOKEN vault kv put secret/gitlab-runner/registration-token \
-                  runner-registration-token='$RUNNER_TOKEN'"
+              # Store the token in Vault (always overwrite)
+              oc exec vault-0 -n "$VAULT_NAMESPACE" -- \
+                sh -c "VAULT_TOKEN=$ROOT_TOKEN vault kv put secret/gitlab-runner/registration-token \
+                runner-registration-token='$RUNNER_TOKEN'"
 
-                echo "✓ Runner token stored in Vault at: secret/gitlab-runner/registration-token"
-              fi
+              echo "✓ Runner token stored in Vault at: secret/gitlab-runner/registration-token"
 
               echo ""
               echo "=== GitLab Runner Token Creation Complete ==="
