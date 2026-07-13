@@ -5,7 +5,7 @@ metadata:
   namespace: gitlab-runner-system
 spec:
   channel: stable
-  installPlanApproval: Manual
+  installPlanApproval: Automatic
   name: gitlab-runner-operator
   source: certified-operators
   sourceNamespace: openshift-marketplace

@@ -5,7 +5,7 @@ metadata:
   namespace: gitlab-system
 spec:
   channel: stable
-  installPlanApproval: Manual
+  installPlanApproval: Automatic
   name: gitlab-operator-kubernetes
   source: certified-operators
   sourceNamespace: openshift-marketplace
