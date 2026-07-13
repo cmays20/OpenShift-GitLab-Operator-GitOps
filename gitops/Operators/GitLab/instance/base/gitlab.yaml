@@ -120,7 +120,7 @@ spec:
           enabled: false
           installEnvoy: false
         hosts:
-          domain: apps.mays-demo.sandbox3446.opentlc.com
+          domain: apps.mays-demo.sandbox2671.opentlc.com
         ingress:
           annotations:
             route.openshift.io/termination: edge

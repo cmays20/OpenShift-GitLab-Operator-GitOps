@@ -7,7 +7,7 @@ metadata:
     argocd.argoproj.io/sync-wave: "7"
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 spec:
-  gitlabUrl: https://gitlab.apps.mays-demo.sandbox3446.opentlc.com
+  gitlabUrl: https://gitlab.apps.mays-demo.sandbox2671.opentlc.com
   token: gitlab-runner-registration-token  # Synced from Vault via VSO
   tags: kubernetes, openshift, demo
   config: gitlab-runner-config  # Reference to ConfigMap containing config.toml

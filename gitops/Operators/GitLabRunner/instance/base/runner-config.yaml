@@ -12,7 +12,7 @@ data:
 
     [[runners]]
       name = "openshift-runner"
-      url = "https://gitlab.apps.mays-demo.sandbox3446.opentlc.com"
+      url = "https://gitlab.apps.mays-demo.sandbox2671.opentlc.com"
       token = "$RUNNER_TOKEN"
       executor = "kubernetes"
       [runners.kubernetes]

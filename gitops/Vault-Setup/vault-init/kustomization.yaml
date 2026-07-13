@@ -14,4 +14,4 @@ patches:
     patch: |-
       - op: replace
         path: /spec/href
-        value: 'https://vault-vault.apps.mays-demo.sandbox3446.opentlc.com'
+        value: 'https://vault-vault.apps.mays-demo.sandbox2671.opentlc.com'

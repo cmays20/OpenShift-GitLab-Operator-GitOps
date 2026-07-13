@@ -211,7 +211,7 @@ oc logs -n gitlab-runner-system job/create-gitlab-runner-token -f
 Expected output:
 ```
 === GitLab Runner Token Creation ===
-GitLab URL: https://gitlab.apps.mays-demo.sandbox3446.opentlc.com
+GitLab URL: https://gitlab.apps.mays-demo.sandbox2671.opentlc.com
 
 Waiting for GitLab to be ready...
 ✓ GitLab is ready
@@ -281,7 +281,7 @@ oc logs -n gitlab-runner-system -l app=gitlab-runner
 
 #### Step 6: Verify in GitLab UI
 
-1. Login to GitLab: `https://gitlab.apps.mays-demo.sandbox3446.opentlc.com`
+1. Login to GitLab: `https://gitlab.apps.mays-demo.sandbox2671.opentlc.com`
 2. Go to **Admin Area** → **CI/CD** → **Runners**
 3. Look for runner with:
    - ✅ **Status: Online** (green circle)
@@ -379,7 +379,7 @@ oc logs -n gitlab-runner-system -l app=gitlab-runner
 
 # Test GitLab connectivity from runner namespace
 oc run test-curl -n gitlab-runner-system --image=curlimages/curl --rm -it --restart=Never -- \
-  curl -v https://gitlab.apps.mays-demo.sandbox3446.opentlc.com/-/readiness
+  curl -v https://gitlab.apps.mays-demo.sandbox2671.opentlc.com/-/readiness
 ```
 
 ### Token Exists but Runner Won't Register

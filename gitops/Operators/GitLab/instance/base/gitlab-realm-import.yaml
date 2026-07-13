@@ -150,9 +150,9 @@ spec:
         protocol: openid-connect
         fullScopeAllowed: true
         redirectUris:
-          - 'https://gitlab.apps.mays-demo.sandbox3446.opentlc.com/users/auth/openid_connect/callback'
+          - 'https://gitlab.apps.mays-demo.sandbox2671.opentlc.com/users/auth/openid_connect/callback'
         webOrigins:
-          - 'https://gitlab.apps.mays-demo.sandbox3446.opentlc.com'
+          - 'https://gitlab.apps.mays-demo.sandbox2671.opentlc.com'
         defaultClientScopes:
           - openid
           - profile
@@ -160,7 +160,7 @@ spec:
           - groups
         attributes:
           "pkce.code.challenge.method": "S256"
-          "post.logout.redirect.uris": "https://gitlab.apps.mays-demo.sandbox3446.opentlc.com/*"
+          "post.logout.redirect.uris": "https://gitlab.apps.mays-demo.sandbox2671.opentlc.com/*"
     enabled: true
     realm: gitlab
     displayName: GitLab
