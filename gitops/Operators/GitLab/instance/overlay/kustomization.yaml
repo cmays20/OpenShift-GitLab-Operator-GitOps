@@ -1,0 +1,13 @@
+resources:
+  - ../base
+
+patches:
+  - target:
+      group: console.openshift.io
+      version: v1
+      kind: ConsoleLink
+      name: gitlab
+    patch: |-
+      - op: replace
+        path: /spec/href
+        value: 'https://keycloak.apps.mays-demo.sandbox2671.opentlc.com'
