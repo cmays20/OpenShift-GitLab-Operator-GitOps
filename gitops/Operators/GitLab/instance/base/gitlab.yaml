@@ -41,9 +41,6 @@ spec:
             tls:
               secretName: kas-acme-tls
       global:
-        certificates:
-          customCAs: []
-          enabled: false
         appConfig:
           artifacts:
             bucket: gitlab-artifacts
@@ -133,6 +130,8 @@ spec:
           class: none
           configureCertmanager: false
           enabled: true
+          tls:
+            enabled: false
         psql:
           database: gitlab
           host: cluster-pg-gitlab-rw.gitlab-system.svc.cluster.local
