@@ -10,4 +10,4 @@ patches:
     patch: |-
       - op: replace
         path: /spec/href
-        value: 'https://keycloak.apps.mays-demo.sandbox2671.opentlc.com'
+        value: 'https://gitlab.apps.mays-demo.sandbox2671.opentlc.com'
