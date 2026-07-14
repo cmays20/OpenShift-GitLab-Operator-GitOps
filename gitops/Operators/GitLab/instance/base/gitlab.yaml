@@ -41,8 +41,6 @@ spec:
             tls:
               secretName: kas-acme-tls
       global:
-        certificates:
-          customCAs: []
         appConfig:
           artifacts:
             bucket: gitlab-artifacts
