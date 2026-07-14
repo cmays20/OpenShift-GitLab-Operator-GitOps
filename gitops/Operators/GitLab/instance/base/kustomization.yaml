@@ -8,3 +8,4 @@ resources:
   - create-omniauth-secret-job.yaml
   - gitlab-realm-import.yaml
   - gitlab.yaml
+  - console-link.yaml
