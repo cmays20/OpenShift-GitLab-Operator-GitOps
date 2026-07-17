@@ -32,7 +32,7 @@ GitLabRunner/
 
 ## Prerequisites
 
-1. **GitLab instance running**: `https://gitlab.apps.mays-demo.sandbox2671.opentlc.com`
+1. **GitLab instance running**: `https://gitlab.apps.mays-demo.sandbox1374.opentlc.com`
 2. **OpenShift Data Foundation (ODF)**: For S3-compatible cache storage
 3. **HashiCorp Vault**: With VSO (Vault Secrets Operator) installed
 4. **Vault authentication configured**: For syncing secrets

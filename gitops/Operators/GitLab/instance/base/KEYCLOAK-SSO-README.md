@@ -67,7 +67,7 @@ global:
 ### User Authentication
 1. User visits GitLab login page
 2. Clicks "Keycloak SSO" button
-3. Redirected to Keycloak (`https://keycloak.apps.mays-demo.sandbox2671.opentlc.com/realms/gitlab`)
+3. Redirected to Keycloak (`https://keycloak.apps.mays-demo.sandbox1374.opentlc.com/realms/gitlab`)
 4. Authenticates with Keycloak credentials
 5. Keycloak redirects back to GitLab with OAuth token
 6. GitLab auto-creates user account (JIT provisioning)
@@ -84,8 +84,8 @@ global:
 ### Keycloak Client Settings
 - **Client ID**: `gitlab`
 - **Client Type**: Confidential (requires secret)
-- **Valid Redirect URIs**: `https://gitlab.apps.mays-demo.sandbox2671.opentlc.com/users/auth/openid_connect/callback`
-- **Web Origins**: `https://gitlab.apps.mays-demo.sandbox2671.opentlc.com`
+- **Valid Redirect URIs**: `https://gitlab.apps.mays-demo.sandbox1374.opentlc.com/users/auth/openid_connect/callback`
+- **Web Origins**: `https://gitlab.apps.mays-demo.sandbox1374.opentlc.com`
 - **PKCE**: Enabled (for enhanced security)
 
 ### GitLab OmniAuth Settings
@@ -108,7 +108,7 @@ global:
 ### Adding Users to Keycloak
 
 **Via Keycloak UI:**
-1. Login to Keycloak: `https://keycloak.apps.mays-demo.sandbox2671.opentlc.com`
+1. Login to Keycloak: `https://keycloak.apps.mays-demo.sandbox1374.opentlc.com`
 2. Select `gitlab` realm (top-left dropdown)
 3. Navigate to Users → Add user
 4. Fill in: Username, Email, First Name, Last Name
@@ -144,7 +144,7 @@ oc get secret gitlab-gitlab-initial-root-password -n gitlab-system \
   -o jsonpath='{.data.password}' | base64 -d && echo
 
 # Login directly with username: root
-# URL: https://gitlab.apps.mays-demo.sandbox2671.opentlc.com/users/sign_in
+# URL: https://gitlab.apps.mays-demo.sandbox1374.opentlc.com/users/sign_in
 ```
 
 ## Testing the Integration
@@ -170,7 +170,7 @@ oc get keycloakrealmimport gitlab-realm -n keycloak
 ```
 
 ### 3. Test SSO Login
-1. Navigate to `https://gitlab.apps.mays-demo.sandbox2671.opentlc.com`
+1. Navigate to `https://gitlab.apps.mays-demo.sandbox1374.opentlc.com`
 2. Look for "Keycloak SSO" button on login page
 3. Click it - should redirect to Keycloak
 4. Login with Keycloak credentials
@@ -215,7 +215,7 @@ oc get secret gitlab-oauth-client-secret -n keycloak -o jsonpath='{.data.client-
 
 ### "Redirect URI Mismatch" Error
 - Check Keycloak client redirect URIs include:
-  `https://gitlab.apps.mays-demo.sandbox2671.opentlc.com/users/auth/openid_connect/callback`
+  `https://gitlab.apps.mays-demo.sandbox1374.opentlc.com/users/auth/openid_connect/callback`
 - Verify GitLab URL in OmniAuth config matches
 
 ## Configuration Files

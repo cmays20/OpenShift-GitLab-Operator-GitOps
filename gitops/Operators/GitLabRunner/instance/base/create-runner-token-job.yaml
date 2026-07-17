@@ -32,7 +32,7 @@ spec:
               #!/bin/bash
               set -e
 
-              GITLAB_URL="https://gitlab.apps.mays-demo.sandbox2671.opentlc.com"
+              GITLAB_URL="https://gitlab.apps.mays-demo.sandbox1374.opentlc.com"
               VAULT_NAMESPACE="vault"
 
               echo "=== GitLab Runner Token Creation ==="

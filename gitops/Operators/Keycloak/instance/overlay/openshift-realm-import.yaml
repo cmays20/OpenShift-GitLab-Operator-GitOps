@@ -297,7 +297,7 @@ spec:
         clientAuthenticatorType: client-secret
         fullScopeAllowed: true
         redirectUris:
-          - 'https://oauth-openshift.apps.mays-demo.sandbox2671.opentlc.com/oauth2callback/*'
+          - 'https://oauth-openshift.apps.mays-demo.sandbox1374.opentlc.com/oauth2callback/*'
         clientId: openshift
         optionalClientScopes:
           - address
@@ -320,7 +320,7 @@ spec:
         serviceAccountsEnabled: false
         protocol: openid-connect
         webOrigins:
-          - 'https://oauth-openshift.apps.mays-demo.sandbox2671.opentlc.com'
+          - 'https://oauth-openshift.apps.mays-demo.sandbox1374.opentlc.com'
     enabled: true
     groups:
       - name: cluster-admins
