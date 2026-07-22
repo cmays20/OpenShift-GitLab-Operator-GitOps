@@ -26,8 +26,16 @@ spec:
     - repoURL: 'GITREPO'
       targetRevision: REVISION
       path: gitops/ArgoCD-Applications/helm-charts/redis-operator-fixes
+  ignoreDifferences:
+    - group: rbac.authorization.k8s.io
+      kind: ClusterRole
+      name: redis-operator
+      jsonPointers:
+        - /metadata/labels/rbac.authorization.k8s.io~1aggregate-to-admin
+        - /rules
   syncPolicy:
     automated:
       selfHeal: true
     syncOptions:
       - ServerSideApply=true
+      - RespectIgnoreDifferences=true
